@@ -78,34 +78,42 @@
     .effects-sidebar-left{
       background-color:#f8fafc;
       border-right:1px solid #cbd5e1;
-      padding:14px 8px;
+      padding:10px 8px 20px;
       display:flex;
       flex-direction:column;
-      gap:3px;
+      gap:0;
       overflow-y:auto;
       transition:opacity 0.25s ease;
     }
     .effects-sidebar-left.sidebar-dimmed{ opacity:0.45; pointer-events:none; }
-    .effects-sidebar-title{
-      font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;
-      color:#059669;padding:0 8px 10px;border-bottom:1px solid #e2e8f0;margin-bottom:6px;
+
+    /* Grupos del sidebar */
+    .sidebar-group{ margin-bottom:8px; }
+    .sidebar-group-title{
+      font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1.2px;
+      color:#059669;padding:8px 8px 5px;border-bottom:1px solid #e2e8f0;margin-bottom:4px;
     }
+
+    /* Botones de efectos */
     #effects-nav-bar-container{
-      display:flex;flex-direction:column;gap:3px;background:transparent;padding:0;
+      display:flex;flex-direction:column;gap:2px;background:transparent;padding:0;
     }
-    #effects-nav-bar-container button{
-      width:100%;text-align:left;padding:9px 10px 9px 12px;
-      border-radius:8px;border:1px solid transparent;
+    #effects-nav-bar-container button, .sidebar-btn{
+      display:block;width:100%;text-align:left;padding:8px 10px 8px 12px;
+      border-radius:7px;border:1px solid transparent;
       background:transparent;color:#334155;font-size:12px;font-weight:600;
-      cursor:pointer;transition:all 0.18s ease;
+      cursor:pointer;transition:all 0.15s ease;
       white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
     }
-    #effects-nav-bar-container button:hover{
-      background:rgba(26,122,66,0.07);color:#1A7A42;border-color:rgba(26,122,66,0.2);
+    #effects-nav-bar-container button:hover, .sidebar-btn:hover{
+      background:rgba(26,122,66,0.07);color:#1A7A42;border-color:rgba(26,122,66,0.18);
     }
-    #effects-nav-bar-container button.active{
+    #effects-nav-bar-container button.active, .sidebar-btn.active{
       background:rgba(26,122,66,0.12);color:#1A7A42;
       border-color:#1A7A42;border-left-width:3px;padding-left:10px;
+    }
+    #menus-nav-container, #texts-nav-container{
+      display:flex;flex-direction:column;gap:2px;
     }
     .hero{
       position:relative;
@@ -331,18 +339,48 @@
     <!-- V8 construye el header aquí dinámicamente -->
   </div>
   <div class="lab">
-    <!-- Sidebar izquierdo: navegación de efectos de fondo -->
+    <!-- Sidebar izquierdo: navegación categorizada -->
     <aside class="effects-sidebar-left" id="effects-sidebar-left">
-      <div class="effects-sidebar-title">Efectos</div>
-      <nav id="effects-nav-bar-container">
-        <button class="tab active" data-target="particles">Partículas</button>
-        <button class="tab" data-target="aurora">Gradientes líquidos</button>
-        <button class="tab" data-target="video">Vídeo Manual 🎬</button>
-        <button class="tab" data-target="waves">Ondas cinemáticas 🌊</button>
-        <button class="tab" data-target="magneticMouse">Imanes Mouse 🧲</button>
-        <button class="tab" data-target="fireworks">Fuegos Artificiales 🎆</button>
-        <button class="tab" data-target="magnifierGlass">Lupa de Textos 🔍</button>
-      </nav>
+
+      <!-- EFECTOS -->
+      <div class="sidebar-group">
+        <div class="sidebar-group-title">Efectos</div>
+        <nav id="effects-nav-bar-container">
+          <button class="tab" data-target="background">🎨 Solo Fondo</button>
+          <button class="tab active" data-target="particles">Partículas</button>
+          <button class="tab" data-target="aurora">Gradientes líquidos</button>
+          <button class="tab" data-target="video">Vídeo Manual 🎬</button>
+          <button class="tab" data-target="waves">Ondas cinemáticas 🌊</button>
+          <button class="tab" data-target="magneticMouse">Imanes Mouse 🧲</button>
+          <button class="tab" data-target="fireworks">Fuegos Artificiales 🎆</button>
+          <button class="tab" data-target="magnifierGlass">Lupa de Textos 🔍</button>
+        </nav>
+      </div>
+
+      <!-- MENÚS -->
+      <div class="sidebar-group" id="sidebar-group-menus">
+        <div class="sidebar-group-title">Menús</div>
+        <nav id="menus-nav-container">
+          <button class="sidebar-btn" data-section="menus" data-target="primary">Menú Primario</button>
+          <button class="sidebar-btn" data-section="menus" data-target="secondary">Menú Secundario</button>
+        </nav>
+      </div>
+
+      <!-- TEXTOS -->
+      <div class="sidebar-group" id="sidebar-group-texts">
+        <div class="sidebar-group-title">Textos</div>
+        <nav id="texts-nav-container">
+          <button class="sidebar-btn" data-section="texts" data-target="h1">H1 — Título</button>
+          <button class="sidebar-btn" data-section="texts" data-target="h2">H2 — Subtítulo</button>
+          <button class="sidebar-btn" data-section="texts" data-target="h3">H3 — Sección</button>
+          <button class="sidebar-btn" data-section="texts" data-target="h4">H4 — Subsección</button>
+          <button class="sidebar-btn" data-section="texts" data-target="eyebrow">Eyebrow / Kicker</button>
+          <button class="sidebar-btn" data-section="texts" data-target="body">Párrafo / Body</button>
+          <button class="sidebar-btn" data-section="texts" data-target="caption">Caption / Pie</button>
+          <button class="sidebar-btn" data-section="texts" data-target="link">Link / Enlace</button>
+        </nav>
+      </div>
+
     </aside>
     <section class="hero" id="hero-viewport">
       
@@ -1427,6 +1465,7 @@ window.addEventListener('DOMContentLoaded', () => {
       if(d.effects)       state.effects       = Object.assign({}, state.effects, d.effects);
       if(d.designSystem)  state.designSystem  = Object.assign({}, state.designSystem, d.designSystem);
       showEffect(activeEffect); applyDesignTokens(); renderLogoOnViewport();
+      if(typeof window.applyV10Import === 'function') window.applyV10Import(d);
    }
 
    fetch('/assets/css/labHero_unified.json', { cache: 'no-store' })
@@ -2736,6 +2775,7 @@ window.addEventListener('DOMContentLoaded', () => {
             if(typeof showEffect === 'function') showEffect(activeEffect);
             if(typeof renderControls === 'function') renderControls();
             if(typeof renderLogoOnViewport === 'function') renderLogoOnViewport();
+            if(typeof window.applyV10Import === 'function') window.applyV10Import(d);
             updateAppHeaderV8();
           } catch(err){ alert('JSON no válido: ' + err.message); }
         } else {
@@ -3234,6 +3274,469 @@ window.addEventListener('DOMContentLoaded', () => {
 
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', window.loadLabHeroDefaultCssV9);
   else window.loadLabHeroDefaultCssV9();
+})();
+</script>
+
+<script id="labhero-v10-menus-texts">
+/* ==========================================================================
+   LABHERO V10 — Solo Fondo · Menús · Tipografía · Export unificado
+   ========================================================================== */
+(function(){
+'use strict';
+
+/* ──────────────────── CONSTANTES ──────────────────── */
+const FONTS = [
+  {value:"'Space Grotesk', sans-serif",label:'Space Grotesk'},
+  {value:"'Bebas Neue', sans-serif",label:'Bebas Neue'},
+  {value:"'Inter', sans-serif",label:'Inter'},
+  {value:"'Montserrat', sans-serif",label:'Montserrat'}
+];
+const WEIGHTS = [
+  {value:'300',label:'Light 300'},{value:'400',label:'Regular 400'},
+  {value:'500',label:'Medium 500'},{value:'600',label:'SemiBold 600'},
+  {value:'700',label:'Bold 700'},{value:'800',label:'ExtraBold 800'},
+  {value:'900',label:'Black 900'}
+];
+const TRANSFORMS = [
+  {value:'none',label:'Normal'},{value:'uppercase',label:'MAYÚSCULAS'},
+  {value:'lowercase',label:'minúsculas'},{value:'capitalize',label:'Cada Palabra'}
+];
+const ALIGNS = [
+  {value:'left',label:'Izquierda'},{value:'center',label:'Centro'},{value:'right',label:'Derecha'}
+];
+
+/* Definición de cada elemento de texto */
+const TEXT_DEFS = {
+  h1:{label:'H1 — Título',sel:'h1.heading-h1',pfx:'--th1',d:{family:"'Space Grotesk', sans-serif",size:5.5,weight:'800',lineH:0.9,spacing:0,transform:'none',style:'normal',color:'#F4F7F4',bg:'transparent',shadowStr:1.0,stroke:0.7,align:'center',marginB:14,borderW:0,borderC:'transparent',borderR:0,pad:0}},
+  h2:{label:'H2 — Subtítulo',sel:'h2.heading-h2',pfx:'--th2',d:{family:"'Space Grotesk', sans-serif",size:2.0,weight:'650',lineH:1.15,spacing:0,transform:'none',style:'normal',color:'#F4F7F4',bg:'transparent',shadowStr:0.35,stroke:0.39,align:'center',marginB:18,borderW:0,borderC:'transparent',borderR:0,pad:0}},
+  h3:{label:'H3 — Sección',sel:'.section-title',pfx:'--th3',d:{family:"'Inter', sans-serif",size:1.4,weight:'700',lineH:1.2,spacing:0.01,transform:'uppercase',style:'normal',color:'#059669',bg:'transparent',shadowStr:0,stroke:0,align:'left',marginB:10,borderW:0,borderC:'transparent',borderR:0,pad:0}},
+  h4:{label:'H4 — Subsección',sel:'.card h4, .field label',pfx:'--th4',d:{family:"'Inter', sans-serif",size:0.875,weight:'700',lineH:1.3,spacing:0,transform:'none',style:'normal',color:'#0f172a',bg:'transparent',shadowStr:0,stroke:0,align:'left',marginB:4,borderW:0,borderC:'transparent',borderR:0,pad:0}},
+  eyebrow:{label:'Eyebrow / Kicker',sel:'.eyebrow-seo',pfx:'--teyebrow',d:{family:"'Inter', sans-serif",size:0.75,weight:'800',lineH:1.4,spacing:0.14,transform:'uppercase',style:'normal',color:'#2FE56B',bg:'transparent',shadowStr:1.0,stroke:0,align:'center',marginB:12,borderW:0,borderC:'transparent',borderR:0,pad:0}},
+  body:{label:'Párrafo / Body',sel:'p.text-normal',pfx:'--tbody',d:{family:"'Inter', sans-serif",size:1.0,weight:'500',lineH:1.65,spacing:0,transform:'none',style:'normal',color:'#F4F7F4',bg:'transparent',shadowStr:0,stroke:0,align:'center',marginB:22,borderW:0,borderC:'transparent',borderR:0,pad:0}},
+  caption:{label:'Caption / Pie de nota',sel:'.comment-seo',pfx:'--tcaption',d:{family:"'Inter', sans-serif",size:0.75,weight:'400',lineH:1.4,spacing:0,transform:'none',style:'italic',color:'#9AA39C',bg:'transparent',shadowStr:0,stroke:0,align:'center',marginB:24,borderW:0,borderC:'transparent',borderR:0,pad:0}},
+  link:{label:'Link / Enlace',sel:'.btn, a',pfx:'--tlink',d:{family:"'Inter', sans-serif",size:0.875,weight:'600',lineH:1.4,spacing:0.01,transform:'none',style:'normal',color:'#2FE56B',bg:'transparent',shadowStr:0,stroke:0,align:'left',marginB:0,borderW:0,borderC:'transparent',borderR:0,pad:0}}
+};
+
+/* Definición de menús */
+const MENU_DEFS = {
+  primary:{label:'Menú Primario',pfx:'--menpri',d:{family:"'Inter', sans-serif",size:13,weight:'850',spacing:0.01,transform:'none',color:'#f8fafc',colorActive:'#2FE56B',bg:'transparent',bgActive:'rgba(47,229,107,0.16)',radius:999,padV:10,padH:14,gap:8,borderColor:'rgba(255,255,255,0.12)',borderColorActive:'#2FE56B',borderWidth:1}},
+  secondary:{label:'Menú Secundario',pfx:'--mensec',d:{family:"'Inter', sans-serif",size:12,weight:'600',spacing:0,transform:'none',color:'#334155',colorActive:'#1A7A42',bg:'transparent',bgActive:'rgba(26,122,66,0.12)',radius:7,padV:8,padH:12,gap:2,borderColor:'transparent',borderColorActive:'#1A7A42',borderWidth:1,accentBar:3}}
+};
+
+/* ──────────────────── STATE ──────────────────── */
+function ensureV10State(){
+  if(!state.textElements){
+    state.textElements = {};
+    Object.entries(TEXT_DEFS).forEach(([k,d]) => state.textElements[k] = {...d.d});
+  }
+  if(!state.menus){
+    state.menus = {};
+    Object.entries(MENU_DEFS).forEach(([k,d]) => state.menus[k] = {...d.d});
+  }
+  state.v10ActiveSection = state.v10ActiveSection || '';
+  state.v10ActiveTarget  = state.v10ActiveTarget  || '';
+}
+
+/* ──────────────────── CSS INJECTION ──────────────────── */
+function injectV10Styles(){
+  if(document.getElementById('labhero-v10-style')) return;
+  const r = ':root';
+  let css = r + '{\n';
+
+  /* Text vars defaults */
+  Object.entries(TEXT_DEFS).forEach(([k,def]) => {
+    const d = def.d, p = def.pfx;
+    css += `  ${p}-family:${d.family};${p}-size:${d.size}rem;${p}-weight:${d.weight};${p}-line-height:${d.lineH};${p}-letter-spacing:${d.spacing}em;${p}-transform:${d.transform};${p}-style:${d.style};${p}-color:${d.color};${p}-bg:${d.bg};${p}-shadow-strength:${d.shadowStr};${p}-stroke:${d.stroke}px;${p}-align:${d.align};${p}-margin-bottom:${d.marginB}px;${p}-border-width:${d.borderW}px;${p}-border-color:${d.borderC};${p}-border-radius:${d.borderR}px;${p}-padding:${d.pad}px;\n`;
+  });
+  /* Menu vars defaults */
+  Object.entries(MENU_DEFS).forEach(([k,def]) => {
+    const d = def.d, p = def.pfx;
+    css += `  ${p}-family:${d.family};${p}-size:${d.size}px;${p}-weight:${d.weight};${p}-spacing:${d.spacing}em;${p}-transform:${d.transform};${p}-color:${d.color};${p}-color-active:${d.colorActive};${p}-bg:${d.bg};${p}-bg-active:${d.bgActive};${p}-radius:${d.radius}px;${p}-pad-v:${d.padV}px;${p}-pad-h:${d.padH}px;${p}-gap:${d.gap}px;${p}-border-color:${d.borderColor};${p}-border-color-active:${d.borderColorActive};${p}-border-width:${d.borderWidth}px;${k === 'secondary' ? p+'-accent-bar:'+d.accentBar+'px;' : ''}\n`;
+  });
+  css += '}\n';
+
+  /* Apply text CSS vars to selectors */
+  const textRules = {
+    'h1.heading-h1':'--th1',
+    'h2.heading-h2':'--th2',
+    '.eyebrow-seo':'--teyebrow',
+    'p.text-normal':'--tbody',
+    '.comment-seo':'--tcaption'
+  };
+  Object.entries(textRules).forEach(([sel,p]) => {
+    css += `${sel}{font-family:var(${p}-family) !important;font-size:var(${p}-size) !important;font-weight:var(${p}-weight) !important;line-height:var(${p}-line-height) !important;letter-spacing:var(${p}-letter-spacing) !important;text-transform:var(${p}-transform) !important;font-style:var(${p}-style) !important;color:var(${p}-color) !important;background:var(${p}-bg) !important;text-align:var(${p}-align) !important;margin-bottom:var(${p}-margin-bottom) !important;border-width:var(${p}-border-width);border-color:var(${p}-border-color);border-style:solid;border-radius:var(${p}-border-radius);padding:var(${p}-padding) !important;}\n`;
+  });
+  /* Specific shadows for h1/h2 */
+  css += `h1.heading-h1{text-shadow:0 4px 18px rgba(0,0,0,.95),0 0 calc(20px * var(--th1-shadow-strength)) var(--color-brand-primary);-webkit-text-stroke:var(--th1-stroke) rgba(0,0,0,.5);}\n`;
+  css += `h2.heading-h2{text-shadow:0 3px 14px rgba(0,0,0,.9),0 0 calc(10px * var(--th2-shadow-strength)) var(--color-brand-primary);-webkit-text-stroke:var(--th2-stroke) rgba(0,0,0,.42);}\n`;
+
+  /* Apply menu CSS vars */
+  css += `.main-menu-item-v8{font-family:var(--menpri-family) !important;font-size:var(--menpri-size) !important;font-weight:var(--menpri-weight) !important;letter-spacing:var(--menpri-spacing) !important;text-transform:var(--menpri-transform) !important;color:var(--menpri-color) !important;background:var(--menpri-bg) !important;border-radius:var(--menpri-radius) !important;padding:var(--menpri-pad-v) var(--menpri-pad-h) !important;border-color:var(--menpri-border-color) !important;border-width:var(--menpri-border-width) !important;}\n`;
+  css += `.main-menu-item-v8.active{background:var(--menpri-bg-active) !important;color:var(--menpri-color-active) !important;border-color:var(--menpri-border-color-active) !important;}\n`;
+  css += `.main-web-menu-v8{gap:var(--menpri-gap) !important;}\n`;
+  css += `#effects-nav-bar-container button{font-family:var(--mensec-family) !important;font-size:var(--mensec-size) !important;font-weight:var(--mensec-weight) !important;letter-spacing:var(--mensec-spacing) !important;text-transform:var(--mensec-transform) !important;color:var(--mensec-color) !important;background:var(--mensec-bg) !important;border-radius:var(--mensec-radius) !important;padding:var(--mensec-pad-v) var(--mensec-pad-h) !important;border-color:var(--mensec-border-color) !important;border-width:var(--mensec-border-width) !important;}\n`;
+  css += `#effects-nav-bar-container button.active{background:var(--mensec-bg-active) !important;color:var(--mensec-color-active) !important;border-color:var(--mensec-border-color-active) !important;border-left-width:var(--mensec-accent-bar) !important;padding-left:calc(var(--mensec-pad-h) - var(--mensec-accent-bar) + 1px) !important;}\n`;
+  css += `.sidebar-group>#menus-nav-container button.active,.sidebar-group>#texts-nav-container button.active{background:rgba(26,122,66,0.12) !important;color:#1A7A42 !important;border-color:#1A7A42 !important;border-left-width:3px !important;}\n`;
+  css += `.sidebar-group>#menus-nav-container button:hover,.sidebar-group>#texts-nav-container button:hover{background:rgba(26,122,66,0.07) !important;color:#1A7A42 !important;}\n`;
+  css += `.effects-sidebar-left{gap:0 !important;}\n`;
+
+  const s = document.createElement('style');
+  s.id = 'labhero-v10-style';
+  s.textContent = css;
+  document.head.appendChild(s);
+}
+
+/* ──────────────────── APPLY TOKENS ──────────────────── */
+function applyTextTokens(key){
+  ensureV10State();
+  const def = TEXT_DEFS[key]; if(!def) return;
+  const st = state.textElements[key]; if(!st) return;
+  const root = document.documentElement, p = def.pfx;
+  root.style.setProperty(`${p}-family`,  st.family);
+  root.style.setProperty(`${p}-size`,    st.size + 'rem');
+  root.style.setProperty(`${p}-weight`,  String(st.weight));
+  root.style.setProperty(`${p}-line-height`, String(st.lineH));
+  root.style.setProperty(`${p}-letter-spacing`, st.spacing + 'em');
+  root.style.setProperty(`${p}-transform`, st.transform);
+  root.style.setProperty(`${p}-style`,   st.style);
+  root.style.setProperty(`${p}-color`,   st.color);
+  root.style.setProperty(`${p}-bg`,      st.bg);
+  root.style.setProperty(`${p}-shadow-strength`, String(st.shadowStr));
+  root.style.setProperty(`${p}-stroke`,  st.stroke + 'px');
+  root.style.setProperty(`${p}-align`,   st.align);
+  root.style.setProperty(`${p}-margin-bottom`, st.marginB + 'px');
+  root.style.setProperty(`${p}-border-width`, st.borderW + 'px');
+  root.style.setProperty(`${p}-border-color`, st.borderC);
+  root.style.setProperty(`${p}-border-radius`, st.borderR + 'px');
+  root.style.setProperty(`${p}-padding`, st.pad + 'px');
+}
+
+function applyMenuTokens(key){
+  ensureV10State();
+  const def = MENU_DEFS[key]; if(!def) return;
+  const m = state.menus[key]; if(!m) return;
+  const root = document.documentElement, p = def.pfx;
+  root.style.setProperty(`${p}-family`, m.family);
+  root.style.setProperty(`${p}-size`, m.size + 'px');
+  root.style.setProperty(`${p}-weight`, String(m.weight));
+  root.style.setProperty(`${p}-spacing`, m.spacing + 'em');
+  root.style.setProperty(`${p}-transform`, m.transform);
+  root.style.setProperty(`${p}-color`, m.color);
+  root.style.setProperty(`${p}-color-active`, m.colorActive);
+  root.style.setProperty(`${p}-bg`, m.bg);
+  root.style.setProperty(`${p}-bg-active`, m.bgActive);
+  root.style.setProperty(`${p}-radius`, m.radius + 'px');
+  root.style.setProperty(`${p}-pad-v`, m.padV + 'px');
+  root.style.setProperty(`${p}-pad-h`, m.padH + 'px');
+  root.style.setProperty(`${p}-gap`, m.gap + 'px');
+  root.style.setProperty(`${p}-border-color`, m.borderColor);
+  root.style.setProperty(`${p}-border-color-active`, m.borderColorActive);
+  root.style.setProperty(`${p}-border-width`, m.borderWidth + 'px');
+  if(key === 'secondary') root.style.setProperty(`${p}-accent-bar`, m.accentBar + 'px');
+}
+
+/* ──────────────────── CONTROL RENDERERS ──────────────────── */
+function renderTextControls(container, key){
+  const def = TEXT_DEFS[key]; if(!def) return;
+  ensureV10State();
+  const st = state.textElements[key];
+  const upd = (prop, val) => { st[prop] = val; applyTextTokens(key); };
+
+  createSectionTitle(container, def.label);
+  createSelectField(container,'Familia tipográfica',FONTS,st.family, v=>upd('family',v));
+  createSliderField(container,'Tamaño (rem)',0.6,9,0.05,st.size,'rem',v=>upd('size',v));
+  createSelectField(container,'Peso / Grosor',WEIGHTS,String(st.weight),v=>upd('weight',v));
+  createSliderField(container,'Altura de línea',0.75,2.5,0.05,st.lineH,'x',v=>upd('lineH',v));
+  createSliderField(container,'Espaciado letras (em)',-0.05,0.3,0.005,st.spacing,'em',v=>upd('spacing',v));
+  createSelectField(container,'Transformación',TRANSFORMS,st.transform,v=>upd('transform',v));
+  createSelectField(container,'Estilo',[{value:'normal',label:'Normal'},{value:'italic',label:'Italic'},{value:'oblique',label:'Oblique'}],st.style,v=>upd('style',v));
+  createSectionTitle(container,'Color y fondo');
+  createColorField(container,'Color del texto',st.color,v=>upd('color',v));
+  createColorField(container,'Color de fondo',st.bg === 'transparent' ? '#ffffff' : st.bg, v=>upd('bg', v === '#ffffff' ? 'transparent' : v));
+  createSelectField(container,'Alineación',ALIGNS,st.align,v=>upd('align',v));
+  createSectionTitle(container,'Sombra y contorno');
+  createSliderField(container,'Intensidad de sombra / glow',0,3,0.1,st.shadowStr,'x',v=>upd('shadowStr',v));
+  createSliderField(container,'Grosor de contorno (px)',0,3,0.1,st.stroke,'px',v=>upd('stroke',v));
+  createSectionTitle(container,'Bordes y espaciado');
+  createSliderField(container,'Borde (px)',0,8,0.5,st.borderW,'px',v=>upd('borderW',v));
+  createColorField(container,'Color de borde',st.borderC === 'transparent' ? '#1A7A42' : st.borderC,v=>upd('borderC',v));
+  createSliderField(container,'Radio de borde (px)',0,24,1,st.borderR,'px',v=>upd('borderR',v));
+  createSliderField(container,'Padding interior (px)',0,32,1,st.pad,'px',v=>upd('pad',v));
+  createSliderField(container,'Margen inferior (px)',0,60,1,st.marginB,'px',v=>upd('marginB',v));
+}
+
+function renderMenuControls(container, key){
+  const def = MENU_DEFS[key]; if(!def) return;
+  ensureV10State();
+  const m = state.menus[key];
+  const upd = (prop, val) => { m[prop] = val; applyMenuTokens(key); };
+
+  createSectionTitle(container, def.label);
+  createSelectField(container,'Tipografía',FONTS,m.family,v=>upd('family',v));
+  createSliderField(container,'Tamaño de texto (px)',10,20,0.5,m.size,'px',v=>upd('size',v));
+  createSelectField(container,'Peso tipográfico',WEIGHTS,String(m.weight),v=>upd('weight',v));
+  createSliderField(container,'Espaciado letras (em)',0,0.2,0.005,m.spacing,'em',v=>upd('spacing',v));
+  createSelectField(container,'Transformación',TRANSFORMS,m.transform,v=>upd('transform',v));
+  createSectionTitle(container,'Colores');
+  createColorField(container,'Color texto normal',m.color,v=>upd('color',v));
+  createColorField(container,'Color texto activo / hover',m.colorActive,v=>upd('colorActive',v));
+  createColorField(container,'Fondo normal',m.bg === 'transparent' ? '#ffffff' : m.bg,v=>upd('bg', v === '#ffffff' ? 'transparent' : v));
+  createColorField(container,'Fondo activo',m.bgActive,v=>upd('bgActive',v));
+  createColorField(container,'Borde normal',m.borderColor,v=>upd('borderColor',v));
+  createColorField(container,'Borde activo',m.borderColorActive,v=>upd('borderColorActive',v));
+  createSectionTitle(container,'Forma y espaciado');
+  createSliderField(container,'Radio de botón (px)',0,999,2,m.radius,'px',v=>upd('radius',v));
+  createSliderField(container,'Padding vertical (px)',4,24,1,m.padV,'px',v=>upd('padV',v));
+  createSliderField(container,'Padding horizontal (px)',6,32,1,m.padH,'px',v=>upd('padH',v));
+  createSliderField(container,'Separación entre opciones (px)',0,28,1,m.gap,'px',v=>upd('gap',v));
+  createSliderField(container,'Grosor de borde (px)',0,4,0.5,m.borderWidth,'px',v=>upd('borderWidth',v));
+  if(key === 'secondary'){
+    createSliderField(container,'Barra de acento activo (px)',0,6,1,m.accentBar,'px',v=>upd('accentBar',v));
+  }
+}
+
+/* ──────────────────── SIDEBAR CLICK HANDLERS ──────────────────── */
+function bindSidebarSectionButtons(){
+  document.querySelectorAll('.sidebar-btn').forEach(btn => {
+    btn.addEventListener('click', e => {
+      const section = e.currentTarget.dataset.section;
+      const target  = e.currentTarget.dataset.target;
+      /* Desactivar todos los sidebar-btn */
+      document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
+      e.currentTarget.classList.add('active');
+      /* Desactivar también los tabs de efectos */
+      document.querySelectorAll('#effects-nav-bar-container button').forEach(b => b.classList.remove('active'));
+      state.v10ActiveSection = section;
+      state.v10ActiveTarget  = target;
+      /* Cambiar al pane adecuado */
+      if(section === 'menus' || section === 'texts'){
+        /* Usar pane 'styles' como base (panel visible, sin hero-efectos) */
+        if(typeof switchControlPane === 'function') switchControlPane('styles');
+        /* Override inmediato del contenido del panel */
+        renderV10Controls();
+      }
+    });
+  });
+}
+
+function renderV10Controls(){
+  const container = document.getElementById('dynamic-controls');
+  if(!container) return;
+  container.innerHTML = '';
+  const sec = state.v10ActiveSection;
+  const tgt = state.v10ActiveTarget;
+  if(sec === 'texts' && TEXT_DEFS[tgt]){
+    renderTextControls(container, tgt);
+  } else if(sec === 'menus' && MENU_DEFS[tgt]){
+    renderMenuControls(container, tgt);
+  }
+}
+
+/* ──────────────────── HOOK renderControls ──────────────────── */
+const prevRenderControlsV10 = window.renderControls || (()=>{});
+window.renderControls = renderControls = function renderControlsV10(){
+  ensureV10State();
+  const sec = state.v10ActiveSection;
+  if((sec === 'texts' || sec === 'menus') && state.activePane === 'styles'){
+    renderV10Controls();
+    return;
+  }
+  prevRenderControlsV10();
+};
+
+/* ──────────────────── EFECTO "SOLO FONDO" ──────────────────── */
+/* El efecto background no necesita div especial:
+   showEffect('background') oculta todos los efectos y muestra el color de fondo.
+   Cuando el div #background no existe, nada se activa — que es exactamente lo que queremos. */
+
+/* ──────────────────── EXPORTACIÓN UNIFICADA COMPLETA ──────────────────── */
+function buildFullUnifiedCSS(){
+  ensureV10State();
+  const ds = state.designSystem || {};
+  const col = ds.colors || {};
+  const typ = ds.typography || {};
+  const ts  = ds.textStyle || {};
+  const h   = (window.ensureHeaderStateV8 && window.ensureHeaderStateV8()) || {};
+  const eff = state.effects || {};
+  const vid = eff.video || {};
+  const par = eff.particles || {};
+  const im  = eff.imageEffects || {};
+  const au  = eff.aurora || {};
+  const wav = eff.waves || {};
+  const mag = eff.magneticMouse || {};
+  const fw  = eff.fireworks || {};
+  const mg  = eff.magnifierGlass || {};
+
+  let css = `/* ============================================================
+   LABHERO UNIFIED CSS — Generado: ${new Date().toISOString()}
+   Contiene: estilos · header · efectos · imágenes · menús · tipografía
+   ============================================================ */\n\n`;
+
+  css += `:root {\n`;
+  /* Tipografía base */
+  css += `  --font-h1: ${typ.fontH1||"'Space Grotesk', sans-serif"};\n`;
+  css += `  --font-body: ${typ.fontBody||"'Inter', sans-serif"};\n`;
+  /* Colores */
+  css += `  --color-brand-primary: ${col.brandPrimary||'#1A7A42'};\n`;
+  css += `  --color-brand-secondary: ${col.brandSecondary||'#0A2218'};\n`;
+  css += `  --color-bg-viewport: ${col.bgViewport||'#F5FAF7'};\n`;
+  css += `  --color-bg-card: ${col.cardColorHex||'#FFFFFF'};\n`;
+  css += `  --color-text-main: ${col.textMain||'#0C1F14'};\n`;
+  css += `  --color-text-muted: ${col.textMuted||'#3D6952'};\n`;
+  css += `  --color-border: ${col.colorBorder||'#C0D8CA'};\n`;
+  css += `  --card-radius: ${ds.radius||16}px;\n`;
+  /* Texto hero */
+  css += `  --hero-text-style-preset: "${ts.preset||'cinematicGlow'}";\n`;
+  css += `  --hero-text-shadow-strength: ${ts.shadowStrength??0};\n`;
+  css += `  --hero-text-stroke-width: ${ts.strokeWidth??0}px;\n`;
+  css += `  --hero-text-bg-opacity: ${ts.backdropOpacity??0};\n`;
+  css += `  --hero-text-align: ${ts.align||'center'};\n`;
+  /* Header */
+  css += `  --app-header-height: ${h.height||78}px;\n`;
+  css += `  --app-header-logo-size: ${h.logoSize||54}px;\n`;
+  css += `  --app-header-logo-zoom: ${h.logoZoom||1};\n`;
+  css += `  --app-header-bg-opacity: ${h.bgOpacity||0.86};\n`;
+  css += `  --app-header-blur: ${h.blur||16}px;\n`;
+  css += `  --app-header-border-opacity: ${h.borderOpacity||0.22};\n`;
+  css += `  --app-header-menu-gap: ${h.menuGap||8}px;\n`;
+  css += `  --app-header-menu-radius: ${h.menuRadius||999}px;\n`;
+  /* Efectos */
+  css += `  --labhero-video-base-folder: "${vid.baseFolder||'/media/'}";\n`;
+  css += `  --labhero-video-speed: ${vid.speed||1};\n`;
+  css += `  --labhero-video-brightness: ${vid.brightness||100}%;\n`;
+  css += `  --labhero-video-contrast: ${vid.contrast||105}%;\n`;
+  css += `  --labhero-video-mask-opacity: ${vid.maskOpacity||0.35};\n`;
+  css += `  --labhero-particles-count: ${par.count||80};\n`;
+  css += `  --labhero-particles-scale: ${par.scale||1};\n`;
+  css += `  --labhero-particles-color: ${par.color||'#1A7A42'};\n`;
+  css += `  --labhero-aurora-palette: "${au.colorPalette||'fusion'}";\n`;
+  css += `  --labhero-aurora-opacity: ${au.opacity||0.25};\n`;
+  css += `  --labhero-waves-scale: ${wav.scale||2.5}px;\n`;
+  css += `  --labhero-waves-color: ${wav.color||'#1A7A42'};\n`;
+  css += `  --labhero-magnetic-count: ${mag.count||70};\n`;
+  css += `  --labhero-magnetic-attraction: ${mag.attraction||1.5};\n`;
+  css += `  --labhero-fireworks-gravity: ${fw.gravity||1.2};\n`;
+  css += `  --labhero-magnifier-zoom: ${mg.zoom||1.5};\n`;
+  css += `  --labhero-magnifier-size: ${mg.scale||150}px;\n`;
+  /* Imágenes */
+  css += `  --labhero-image-anim-speed: ${im.speed||1};\n`;
+  css += `  --labhero-image-filter-intensity: ${im.scale||1.5};\n`;
+  css += `  --labhero-image-active-effect-mode: "${im.activeFilter||'blur'}";\n`;
+  css += `  --labhero-carousel-enabled: ${im.carouselEnabled?1:0};\n`;
+  css += `  --labhero-carousel-delay: ${im.carouselDelay||5}s;\n`;
+  css += `  --labhero-carousel-transition: "${im.carouselTransition||'fade'}";\n`;
+  /* Menús */
+  Object.entries(MENU_DEFS).forEach(([k,def]) => {
+    const m = state.menus[k]; const p = def.pfx;
+    if(!m) return;
+    css += `  ${p}-family: ${m.family};\n`;
+    css += `  ${p}-size: ${m.size}px;\n`;
+    css += `  ${p}-weight: ${m.weight};\n`;
+    css += `  ${p}-spacing: ${m.spacing}em;\n`;
+    css += `  ${p}-transform: ${m.transform};\n`;
+    css += `  ${p}-color: ${m.color};\n`;
+    css += `  ${p}-color-active: ${m.colorActive};\n`;
+    css += `  ${p}-bg: ${m.bg};\n`;
+    css += `  ${p}-bg-active: ${m.bgActive};\n`;
+    css += `  ${p}-radius: ${m.radius}px;\n`;
+    css += `  ${p}-pad-v: ${m.padV}px;\n`;
+    css += `  ${p}-pad-h: ${m.padH}px;\n`;
+    css += `  ${p}-gap: ${m.gap}px;\n`;
+    css += `  ${p}-border-color: ${m.borderColor};\n`;
+    css += `  ${p}-border-color-active: ${m.borderColorActive};\n`;
+    css += `  ${p}-border-width: ${m.borderWidth}px;\n`;
+    if(k === 'secondary') css += `  ${p}-accent-bar: ${m.accentBar||3}px;\n`;
+  });
+  /* Tipografías de texto */
+  Object.entries(TEXT_DEFS).forEach(([k,def]) => {
+    const st = state.textElements[k]; const p = def.pfx;
+    if(!st) return;
+    css += `  ${p}-family: ${st.family};\n`;
+    css += `  ${p}-size: ${st.size}rem;\n`;
+    css += `  ${p}-weight: ${st.weight};\n`;
+    css += `  ${p}-line-height: ${st.lineH};\n`;
+    css += `  ${p}-letter-spacing: ${st.spacing}em;\n`;
+    css += `  ${p}-transform: ${st.transform};\n`;
+    css += `  ${p}-style: ${st.style};\n`;
+    css += `  ${p}-color: ${st.color};\n`;
+    css += `  ${p}-bg: ${st.bg};\n`;
+    css += `  ${p}-shadow-strength: ${st.shadowStr};\n`;
+    css += `  ${p}-stroke: ${st.stroke}px;\n`;
+    css += `  ${p}-align: ${st.align};\n`;
+    css += `  ${p}-margin-bottom: ${st.marginB}px;\n`;
+    css += `  ${p}-border-width: ${st.borderW}px;\n`;
+    css += `  ${p}-border-color: ${st.borderC};\n`;
+    css += `  ${p}-border-radius: ${st.borderR}px;\n`;
+    css += `  ${p}-padding: ${st.pad}px;\n`;
+  });
+  css += `}\n`;
+  return css;
+}
+
+function buildFullUnifiedJSON(){
+  ensureV10State();
+  return JSON.stringify({
+    exported: new Date().toISOString(),
+    effects: state.effects,
+    designSystem: state.designSystem,
+    menus: state.menus,
+    textElements: state.textElements
+  }, null, 2);
+}
+
+/* ──────────────────── UNIFICAR BOTONES EXPORT ──────────────────── */
+function mergeExportButtons(){
+  const zone = document.getElementById('app-header-export-zone-v8');
+  if(!zone) return;
+  /* Eliminar los dos botones anteriores */
+  zone.querySelectorAll('.header-export-btn-v8').forEach(b => {
+    if(b.innerHTML.includes('CSS') || b.innerHTML.includes('JSON') || b.innerHTML.includes('⬇')) b.remove();
+  });
+  /* Nuevo botón único */
+  if(document.getElementById('btn-export-unified-v10')) return;
+  const btn = document.createElement('button');
+  btn.id = 'btn-export-unified-v10';
+  btn.type = 'button';
+  btn.className = 'header-export-btn-v8';
+  btn.title = 'Exportar CSS + JSON unificados y guardar en /assets/css/';
+  btn.innerHTML = '⬇ Exportar';
+  btn.addEventListener('click', () => {
+    const css = buildFullUnifiedCSS();
+    const jsonStr = buildFullUnifiedJSON();
+    triggerDownload(new Blob([css],    {type:'text/css'}),         'labHero_unified.css');
+    triggerDownload(new Blob([jsonStr],{type:'application/json'}), 'labHero_unified.json');
+    if(typeof saveAssetToServer === 'function'){
+      saveAssetToServer('labHero_unified.css',  css);
+      saveAssetToServer('labHero_unified.json', jsonStr);
+    }
+  });
+  zone.appendChild(btn);
+}
+
+/* ──────────────────── IMPORT JSON: incluir menus y textElements ──────────────────── */
+const prevImportApply = window.__v10ImportApply;
+window.__v10ApplyImport = function(d){
+  ensureV10State();
+  if(d.menus) state.menus = Object.assign({}, state.menus, d.menus);
+  if(d.textElements) state.textElements = Object.assign({}, state.textElements, d.textElements);
+  Object.keys(MENU_DEFS).forEach(k => applyMenuTokens(k));
+  Object.keys(TEXT_DEFS).forEach(k => applyTextTokens(k));
+};
+
+/* ──────────────────── INIT ──────────────────── */
+window.addEventListener('DOMContentLoaded', () => {
+  ensureV10State();
+  injectV10Styles();
+  Object.keys(TEXT_DEFS).forEach(k => applyTextTokens(k));
+  Object.keys(MENU_DEFS).forEach(k => applyMenuTokens(k));
+  bindSidebarSectionButtons();
+  /* Reemplaza los botones de export después de que V8 los crea */
+  setTimeout(mergeExportButtons, 300);
+});
+
+/* Exponer para que el import del header V8 también aplique los nuevos datos */
+window.applyV10Import = window.__v10ApplyImport;
+
 })();
 </script>
 
