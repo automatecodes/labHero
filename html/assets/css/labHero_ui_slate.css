@@ -1,0 +1,23 @@
+/* =========================================================================
+   LABHERO UI — Slate (pizarra corporate, acento verde jade)
+   ========================================================================= */
+.effects-sidebar-left { background:#1e293b !important; border-right:1px solid #334155 !important; }
+.sidebar-group-title { color:#34d399 !important; border-bottom-color:#334155 !important; }
+.sidebar-btn, #effects-nav-bar-container button { color:#94a3b8 !important; background:transparent !important; }
+.sidebar-btn:hover, #effects-nav-bar-container button:hover { background:rgba(52,211,153,.08) !important; color:#34d399 !important; }
+.sidebar-btn.active, #effects-nav-bar-container button.active { background:rgba(52,211,153,.14) !important; color:#34d399 !important; border-color:#34d399 !important; }
+.panel { background-color:#1e293b !important; border-left-color:#334155 !important; }
+.panel h3, .panel-title-v11 { color:#f1f5f9 !important; }
+.section-title { color:#34d399 !important; border-color:#334155 !important; }
+.field label, .ctrl-label-edit { color:#94a3b8 !important; }
+.field span.small { color:#64748b !important; }
+.field input[type=range] { accent-color:#34d399; }
+.field select, .field input[type=text] { background:#0f172a !important; color:#e2e8f0 !important; border-color:#334155 !important; }
+.field input[type=color] { border-color:#334155 !important; }
+.io-box { background:#0f172a !important; border-color:#334155 !important; color:#94a3b8 !important; }
+.io-box label.file-label { color:#64748b !important; }
+.field-checkbox { color:#94a3b8 !important; }
+.topbar.app-header-v8 { background:rgba(30,41,59,.95) !important; border-bottom-color:rgba(52,211,153,.2) !important; }
+.main-menu-item-v8 { color:#e2e8f0 !important; background:rgba(255,255,255,.05) !important; border-color:rgba(255,255,255,.08) !important; }
+.main-menu-item-v8.active { background:rgba(52,211,153,.2) !important; color:#34d399 !important; border-color:rgba(52,211,153,.45) !important; }
+.header-export-btn-v8 { border-color:rgba(52,211,153,.3) !important; color:#34d399 !important; }

@@ -1,0 +1,24 @@
+/* =========================================================================
+   LABHERO UI — Dark (oscuro profesional, verde neón)
+   ========================================================================= */
+.effects-sidebar-left { background:#0D1117 !important; border-right:1px solid #1E2622 !important; }
+.sidebar-group-title { color:#2FE56B !important; border-bottom-color:#1E2622 !important; }
+.sidebar-btn, #effects-nav-bar-container button { color:#9AA39C !important; background:transparent !important; }
+.sidebar-btn:hover, #effects-nav-bar-container button:hover { background:rgba(47,229,107,.08) !important; color:#2FE56B !important; }
+.sidebar-btn.active, #effects-nav-bar-container button.active { background:rgba(47,229,107,.14) !important; color:#2FE56B !important; border-color:#2FE56B !important; }
+.panel { background-color:#0D1117 !important; border-left-color:#1E2622 !important; }
+.panel h3, .panel-title-v11 { color:#e2e8f0 !important; }
+.section-title { color:#2FE56B !important; border-color:#1E2622 !important; }
+.field label, .ctrl-label-edit { color:#9AA39C !important; }
+.field span.small { color:#64748b !important; }
+.field input[type=range] { accent-color:#2FE56B; }
+.field select, .field input[type=text] { background:#161b22 !important; color:#e2e8f0 !important; border-color:#2d3748 !important; }
+.field input[type=color] { border-color:#2d3748 !important; }
+.io-box { background:#161b22 !important; border-color:#2d3748 !important; color:#9AA39C !important; }
+.io-box label.file-label { color:#64748b !important; }
+.field-checkbox { color:#9AA39C !important; }
+.topbar.app-header-v8 { background:rgba(10,14,11,.92) !important; border-bottom-color:rgba(47,229,107,.18) !important; }
+.main-menu-item-v8 { color:#e2e8f0 !important; background:rgba(255,255,255,.06) !important; border-color:rgba(255,255,255,.1) !important; }
+.main-menu-item-v8.active { background:rgba(47,229,107,.18) !important; color:#2FE56B !important; border-color:rgba(47,229,107,.4) !important; }
+.header-export-btn-v8 { border-color:rgba(47,229,107,.3) !important; color:#2FE56B !important; }
+.panel-switcher { background:#0D1117 !important; }

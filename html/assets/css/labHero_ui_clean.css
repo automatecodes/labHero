@@ -1,0 +1,23 @@
+/* =========================================================================
+   LABHERO UI — Clean (Blanco profesional, verde esmeralda)
+   Tema de interfaz por defecto — aplica al header, sidebars y panel
+   ========================================================================= */
+.effects-sidebar-left { background:#f8fafc !important; border-right:1px solid #cbd5e1 !important; }
+.sidebar-group-title { color:#059669 !important; }
+.sidebar-btn, #effects-nav-bar-container button { color:#334155 !important; background:transparent !important; }
+.sidebar-btn:hover, #effects-nav-bar-container button:hover { background:rgba(26,122,66,.07) !important; color:#1A7A42 !important; }
+.sidebar-btn.active, #effects-nav-bar-container button.active { background:rgba(26,122,66,.12) !important; color:#1A7A42 !important; border-color:#1A7A42 !important; }
+.panel { background-color:#f8fafc !important; }
+.panel h3, .panel-title-v11 { color:#0f172a !important; }
+.section-title { color:#059669 !important; border-color:#e2e8f0 !important; }
+.field label, .ctrl-label-edit { color:#334155 !important; }
+.field span.small { color:#475569 !important; }
+.field input[type=range] { accent-color:#1A7A42; }
+.field select, .field input[type=color] { background:#fff !important; color:#0f172a !important; border-color:#cbd5e1 !important; }
+.io-box { background:#fff !important; border-color:#cbd5e1 !important; color:#334155 !important; }
+.io-box label.file-label { color:#475569 !important; }
+.field-checkbox { color:#334155 !important; }
+.topbar.app-header-v8 { background:rgba(255,255,255,.95) !important; border-bottom-color:rgba(203,213,225,.7) !important; }
+.main-menu-item-v8 { color:#0f172a !important; }
+.main-menu-item-v8.active { background:var(--color-brand-primary) !important; color:#fff !important; }
+.header-export-btn-v8 { border-color:rgba(26,122,66,.35) !important; color:#1A7A42 !important; }

@@ -1,0 +1,23 @@
+/* =========================================================================
+   LABHERO UI — Forest (verde oscuro profundo, texto crema)
+   ========================================================================= */
+.effects-sidebar-left { background:#0a1f14 !important; border-right:1px solid #1a3a24 !important; }
+.sidebar-group-title { color:#4ade80 !important; border-bottom-color:#1a3a24 !important; }
+.sidebar-btn, #effects-nav-bar-container button { color:#86efac !important; background:transparent !important; }
+.sidebar-btn:hover, #effects-nav-bar-container button:hover { background:rgba(74,222,128,.1) !important; color:#4ade80 !important; }
+.sidebar-btn.active, #effects-nav-bar-container button.active { background:rgba(74,222,128,.18) !important; color:#4ade80 !important; border-color:#4ade80 !important; }
+.panel { background-color:#0a1f14 !important; border-left-color:#1a3a24 !important; }
+.panel h3, .panel-title-v11 { color:#f0fdf4 !important; }
+.section-title { color:#4ade80 !important; border-color:#1a3a24 !important; }
+.field label, .ctrl-label-edit { color:#86efac !important; }
+.field span.small { color:#4ade80 !important; }
+.field input[type=range] { accent-color:#4ade80; }
+.field select, .field input[type=text] { background:#071510 !important; color:#f0fdf4 !important; border-color:#1a3a24 !important; }
+.field input[type=color] { border-color:#1a3a24 !important; }
+.io-box { background:#071510 !important; border-color:#1a3a24 !important; color:#86efac !important; }
+.io-box label.file-label { color:#4ade80 !important; }
+.field-checkbox { color:#86efac !important; }
+.topbar.app-header-v8 { background:rgba(7,21,16,.95) !important; border-bottom-color:rgba(74,222,128,.2) !important; }
+.main-menu-item-v8 { color:#f0fdf4 !important; background:rgba(255,255,255,.04) !important; border-color:rgba(74,222,128,.12) !important; }
+.main-menu-item-v8.active { background:rgba(74,222,128,.2) !important; color:#4ade80 !important; border-color:rgba(74,222,128,.5) !important; }
+.header-export-btn-v8 { border-color:rgba(74,222,128,.35) !important; color:#4ade80 !important; }
