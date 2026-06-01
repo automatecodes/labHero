@@ -72,7 +72,41 @@
     .topbar button.active,.topbar button:hover{border-color:var(--color-brand-primary);color:var(--color-brand-primary);background: rgba(47,229,107,0.05);}
     
     /* INTERFAZ LABORATORIO */
-    .lab{display:grid;grid-template-columns:1fr 380px;min-height:calc(100vh - 62px)}
+    .lab{display:grid;grid-template-columns:176px 1fr 380px;min-height:calc(100vh - 62px)}
+
+    /* SIDEBAR IZQUIERDO DE EFECTOS */
+    .effects-sidebar-left{
+      background-color:#f8fafc;
+      border-right:1px solid #cbd5e1;
+      padding:14px 8px;
+      display:flex;
+      flex-direction:column;
+      gap:3px;
+      overflow-y:auto;
+      transition:opacity 0.25s ease;
+    }
+    .effects-sidebar-left.sidebar-dimmed{ opacity:0.45; pointer-events:none; }
+    .effects-sidebar-title{
+      font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;
+      color:#059669;padding:0 8px 10px;border-bottom:1px solid #e2e8f0;margin-bottom:6px;
+    }
+    #effects-nav-bar-container{
+      display:flex;flex-direction:column;gap:3px;background:transparent;padding:0;
+    }
+    #effects-nav-bar-container button{
+      width:100%;text-align:left;padding:9px 10px 9px 12px;
+      border-radius:8px;border:1px solid transparent;
+      background:transparent;color:#334155;font-size:12px;font-weight:600;
+      cursor:pointer;transition:all 0.18s ease;
+      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    }
+    #effects-nav-bar-container button:hover{
+      background:rgba(26,122,66,0.07);color:#1A7A42;border-color:rgba(26,122,66,0.2);
+    }
+    #effects-nav-bar-container button.active{
+      background:rgba(26,122,66,0.12);color:#1A7A42;
+      border-color:#1A7A42;border-left-width:3px;padding-left:10px;
+    }
     .hero{
       position:relative;
       overflow:hidden;
@@ -294,17 +328,22 @@
 </head>
 <body>
   <div class="topbar">
-    <nav id="effects-nav-bar-container">
-      <button class="tab active" data-target="particles">1. Partículas</button>
-      <button class="tab" data-target="aurora">2. Gradientes líquidos</button>
-      <button class="tab" data-target="video">3. Vídeo Manual 🎬</button>
-      <button class="tab" data-target="waves">4. Ondas cinemáticas 🌊</button>
-      <button class="tab" data-target="magneticMouse">5. Imanes Mouse 🧲</button>
-      <button class="tab" data-target="fireworks">6. Fuegos Artificiales 🎆</button>
-      <button class="tab" data-target="magnifierGlass">7. Lupa de Textos 🔍</button>
-    </nav>
+    <!-- V8 construye el header aquí dinámicamente -->
   </div>
   <div class="lab">
+    <!-- Sidebar izquierdo: navegación de efectos de fondo -->
+    <aside class="effects-sidebar-left" id="effects-sidebar-left">
+      <div class="effects-sidebar-title">Efectos</div>
+      <nav id="effects-nav-bar-container">
+        <button class="tab active" data-target="particles">Partículas</button>
+        <button class="tab" data-target="aurora">Gradientes líquidos</button>
+        <button class="tab" data-target="video">Vídeo Manual 🎬</button>
+        <button class="tab" data-target="waves">Ondas cinemáticas 🌊</button>
+        <button class="tab" data-target="magneticMouse">Imanes Mouse 🧲</button>
+        <button class="tab" data-target="fireworks">Fuegos Artificiales 🎆</button>
+        <button class="tab" data-target="magnifierGlass">Lupa de Textos 🔍</button>
+      </nav>
+    </aside>
     <section class="hero" id="hero-viewport">
       
       <div class="lupa-lens" id="lupa-lens-element"></div>
@@ -442,6 +481,8 @@ document.querySelectorAll('#effects-nav-bar-container button').forEach(button =>
    button.addEventListener('click', (e) => {
       document.querySelectorAll('#effects-nav-bar-container button').forEach(b => b.classList.remove('active'));
       e.target.classList.add('active');
+      /* Si no estamos en el pane de efectos, cambiar primero */
+      if(state.activePane !== 'effects') switchControlPane('effects');
       showEffect(e.target.dataset.target);
    });
 });
@@ -608,23 +649,26 @@ function switchControlPane(pane) {
    const zoneEffects = document.getElementById('import-zone-effects');
    const zoneStyles = document.getElementById('import-zone-styles');
    const labelBtn = document.getElementById('export-btn-label');
-   const topbar = document.getElementById('effects-nav-bar-container');
    const imgView = document.getElementById('imageEffectsView');
    const cardWrapper = document.getElementById('hero-main-card-wrapper');
+   const sidebar = document.getElementById('effects-sidebar-left');
+
+   /* El sidebar siempre es visible; se atenúa cuando no está en el pane de efectos */
+   if(sidebar) sidebar.classList.toggle('sidebar-dimmed', pane !== 'effects');
 
    if(pane === 'effects') {
       document.getElementById('panel-title-text').innerText = "Estudio de Fondo";
       document.getElementById('panel-desc-text').innerText = "Calibración independiente de los motores de fondo.";
       zoneEffects.classList.remove('hidden'); zoneStyles.classList.add('hidden');
-      topbar.classList.remove('hidden'); imgView.classList.add('hidden'); cardWrapper.classList.remove('hidden');
+      imgView.classList.add('hidden'); cardWrapper.classList.remove('hidden');
       labelBtn.textContent = "Descargar Ajustes (.json)";
       showEffect(activeEffect);
-   } 
+   }
    else if(pane === 'images') {
       document.getElementById('panel-title-text').innerText = "Efectos sobre Imagen";
       document.getElementById('panel-desc-text').innerText = "Aplica distorsiones y filtros de vanguardia sobre imágenes corporativas.";
       zoneEffects.classList.add('hidden'); zoneStyles.classList.add('hidden');
-      topbar.classList.add('hidden'); imgView.classList.remove('hidden'); cardWrapper.classList.add('hidden');
+      imgView.classList.remove('hidden'); cardWrapper.classList.add('hidden');
       document.querySelectorAll('.bg.effect, .video-hero-container').forEach(el=>el.classList.add('hidden'));
       labelBtn.textContent = "Exportar Imagen CSS (.css)";
    }
@@ -632,7 +676,7 @@ function switchControlPane(pane) {
       document.getElementById('panel-title-text').innerText = "Identidad de Marca";
       document.getElementById('panel-desc-text').innerText = "Personalización de las directrices consolidadas de los archivos CSS.";
       zoneEffects.classList.add('hidden'); zoneStyles.classList.remove('hidden');
-      topbar.classList.add('hidden'); imgView.classList.add('hidden'); cardWrapper.classList.remove('hidden');
+      imgView.classList.add('hidden'); cardWrapper.classList.remove('hidden');
       labelBtn.textContent = "Exportar Código CSS (.css)";
       showEffect(activeEffect);
    }
@@ -2533,8 +2577,9 @@ window.addEventListener('DOMContentLoaded', () => {
     qs('panel-desc-text').innerText = 'Optimización de vídeos MP4 para fondos web mediante backend Docker con FFmpeg.';
     qs('import-zone-effects')?.classList.add('hidden');
     qs('import-zone-styles')?.classList.add('hidden');
-    qs('effects-nav-bar-container')?.classList.add('hidden');
     qs('imageEffectsView')?.classList.add('hidden');
+    const sidebarV6 = qs('effects-sidebar-left');
+    if(sidebarV6) sidebarV6.classList.add('sidebar-dimmed');
     qs('hero-main-card-wrapper')?.classList.add('hidden');
     document.querySelectorAll('.bg.effect, .video-hero-container').forEach(el => el.classList.add('hidden'));
     qs('videoOptimizationView')?.classList.remove('hidden');
@@ -2635,8 +2680,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
   function setupAppHeaderV8(){
     const topbar = document.querySelector('.topbar');
-    const effectNav = qs('effects-nav-bar-container');
-    if(!topbar || !effectNav) return;
+    if(!topbar) return;
 
     topbar.classList.add('app-header-v8');
     if(qs('app-header-inner-v8')) {
@@ -2666,11 +2710,6 @@ window.addEventListener('DOMContentLoaded', () => {
       btn.addEventListener('click', () => switchControlPane(meta.key));
       nav.appendChild(btn);
     });
-
-    const effectRow = document.createElement('div');
-    effectRow.id = 'app-header-effect-row-v8';
-    effectRow.className = 'app-header-effect-row-v8';
-    effectRow.appendChild(effectNav);
 
     /* Botones de exportación en el header */
     const exportZone = document.createElement('div');
@@ -2740,7 +2779,6 @@ window.addEventListener('DOMContentLoaded', () => {
     inner.appendChild(nav);
     inner.appendChild(exportZone);
     topbar.appendChild(inner);
-    topbar.appendChild(effectRow);
 
     updateAppHeaderV8();
   }
@@ -2783,8 +2821,9 @@ window.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    const row = qs('app-header-effect-row-v8');
-    if(row) row.classList.toggle('hidden', state.activePane !== 'effects');
+    /* Sidebar de efectos: visible siempre, atenuado si no es el pane activo */
+    const sidebarV8 = qs('effects-sidebar-left');
+    if(sidebarV8) sidebarV8.classList.toggle('sidebar-dimmed', state.activePane !== 'effects');
 
     renderLogoOnViewport && renderLogoOnViewport();
   }
@@ -3015,14 +3054,22 @@ window.addEventListener('DOMContentLoaded', () => {
     .app-header-v8[data-menu-style="minimal"] .main-menu-item-v8{background:transparent;color:#cbd5e1;}.app-header-v8[data-menu-style="minimal"] .main-menu-item-v8.active{color:var(--color-brand-primary);}
     .app-header-v8[data-menu-hover="liftGlow"] .main-menu-item-v8:hover{transform:translateY(-2px);box-shadow:var(--brand-glow-effect);}
     .app-header-v8[data-menu-hover="softScale"] .main-menu-item-v8:hover{transform:scale(1.04);}.app-header-v8[data-menu-hover="invert"] .main-menu-item-v8:hover{background:var(--color-brand-primary);color:#07160c;}.app-header-v8[data-menu-hover="slideBar"] .main-menu-item-v8:hover::before{content:"";position:absolute;left:12px;right:12px;bottom:5px;height:2px;background:var(--color-brand-primary);}
-    .app-header-effect-row-v8{display:flex;justify-content:center;padding:0 14px 10px;}.app-header-effect-row-v8.hidden{display:none !important;}
-    .app-header-effect-row-v8 #effects-nav-bar-container{display:flex !important;gap:5px;flex-wrap:wrap;justify-content:center;padding:0;background:transparent;}
-    .app-header-effect-row-v8 #effects-nav-bar-container button{background:rgba(255,255,255,.08);color:#e2e8f0;border:1px solid rgba(255,255,255,.12);}.app-header-effect-row-v8 #effects-nav-bar-container button.active,.app-header-effect-row-v8 #effects-nav-bar-container button:hover{background:rgba(47,229,107,.16);color:var(--color-brand-primary);border-color:var(--color-brand-primary);}
     .app-header-export-zone-v8{display:flex;align-items:center;gap:6px;margin-left:auto;flex-shrink:0;}
     .header-export-btn-v8{border:1px solid rgba(47,229,107,.4);background:rgba(47,229,107,.08);color:var(--color-brand-primary,#2FE56B);border-radius:999px;padding:7px 13px;font-size:12px;font-weight:800;cursor:pointer;letter-spacing:.02em;transition:all .2s ease;white-space:nowrap;}
     .header-export-btn-v8:hover{background:var(--color-brand-primary,#2FE56B);color:#07160c;box-shadow:0 0 14px rgba(47,229,107,.35);}
     .panel-switcher{display:none !important;}
-    @media(max-width:760px){.app-header-inner-v8{grid-template-columns:1fr;gap:10px;padding-block:12px}.app-header-logo-slot-v8{justify-content:center}.main-web-menu-v8{justify-content:center}.main-menu-item-v8{font-size:12px;padding:8px 10px}.lab{grid-template-columns:1fr}.panel{max-height:none}.hero{border-right:0}}
+    @media(max-width:760px){
+      .app-header-inner-v8{grid-template-columns:1fr;gap:10px;padding-block:12px}
+      .app-header-logo-slot-v8{justify-content:center}
+      .main-web-menu-v8{justify-content:center}
+      .main-menu-item-v8{font-size:12px;padding:8px 10px}
+      .lab{grid-template-columns:1fr}
+      .effects-sidebar-left{flex-direction:row;flex-wrap:wrap;border-right:0;border-bottom:1px solid #cbd5e1;padding:10px 8px;gap:4px}
+      #effects-nav-bar-container{flex-direction:row;flex-wrap:wrap;gap:4px}
+      #effects-nav-bar-container button{width:auto;font-size:11px;padding:6px 10px}
+      .panel{max-height:none}
+      .hero{border-right:0}
+    }
   `;
   document.head.appendChild(style);
 
