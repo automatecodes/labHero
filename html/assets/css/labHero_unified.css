@@ -1,0 +1,53 @@
+/* ============================================================
+   LABHERO UNIFIED CSS — generado automáticamente
+   Sobrescribir con ⬇ CSS del menú de navegación
+   ============================================================ */
+
+/* ── labHero_styles.css ── */
+:root {
+  --font-h1:   'Space Grotesk', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --color-brand-primary:   #1A7A42;
+  --color-bg-viewport:     #F5FAF7;
+  --color-bg-card:         #FFFFFF;
+  --color-border:          #C0D8CA;
+  --card-radius:           16px;
+  --hero-text-style-preset: "cinematicGlow";
+  --hero-text-shadow-strength: 0;
+  --hero-text-stroke-width:    0px;
+  --hero-text-bg-opacity:      0;
+  --hero-text-align:           center;
+}
+
+/* ── labHero_header.css ── */
+:root {
+  --app-header-height:         78px;
+  --app-header-logo-size:      54px;
+  --app-header-logo-zoom:      1;
+  --app-header-bg-opacity:     0.86;
+  --app-header-blur:           16px;
+  --app-header-border-opacity: 0.22;
+  --app-header-menu-gap:       8px;
+  --app-header-menu-radius:    999px;
+}
+
+/* ── labHero_efects.css ── */
+:root {
+  --labhero-video-base-folder:   "/media/";
+  --labhero-video-speed:         1;
+  --labhero-video-brightness:    100%;
+  --labhero-video-contrast:      105%;
+  --labhero-video-mask-opacity:  0.35;
+  --labhero-particles-count:     80;
+  --labhero-particles-scale:     1;
+}
+
+/* ── labHero_images.css ── */
+:root {
+  --labhero-image-anim-speed:        1;
+  --labhero-image-filter-intensity:  1.5;
+  --labhero-image-active-effect-mode: "blur";
+  --labhero-carousel-enabled:        0;
+  --labhero-carousel-delay:          5s;
+  --labhero-carousel-transition:     "fade";
+}

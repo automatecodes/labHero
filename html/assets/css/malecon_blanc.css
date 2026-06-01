@@ -1,0 +1,30 @@
+/* =========================================================================
+   MALECON BLANC — Blanco puro · Verde esmeralda · Negro tipográfico
+   Tema limpio, luminoso y de alta legibilidad
+   ========================================================================= */
+:root {
+  --font-h1:   'Space Grotesk', sans-serif;
+  --font-body: 'Inter', sans-serif;
+
+  --color-brand-primary:   #1A7A42;
+  --color-brand-secondary: #0A2218;
+  --color-bg-viewport:     #FFFFFF;
+  --color-bg-card:         #F8FBF9;
+  --color-text-main:       #0C1F14;
+  --color-text-muted:      #3D6952;
+  --color-border:          #C0D8CA;
+
+  --card-radius:      16px;
+  --card-bg-opacity:  1.0;
+  --brand-glow-effect: 0 0 0.5rem rgba(26,122,66,.2), 0 0 1.5rem rgba(26,122,66,.08);
+  --card-shadow:       0 4px 24px rgba(10,34,24,.08);
+
+  --hero-text-shadow-strength: 0;
+  --hero-text-stroke-width:    0px;
+  --hero-text-bg-opacity:      0;
+  --hero-text-align:           center;
+
+  --c-blob1: rgba(26,122,66,.18);
+  --c-blob2: rgba(10,160,80,.14);
+  --c-blob3: rgba(100,180,130,.16);
+}

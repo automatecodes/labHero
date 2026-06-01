@@ -1,0 +1,30 @@
+/* =========================================================================
+   MALECON SAGE — Blanco nórdico · Sage verde suave · Negro pizarra
+   Minimalismo escandinavo con acento Latino. Silencioso, premium.
+   ========================================================================= */
+:root {
+  --font-h1:   'Space Grotesk', sans-serif;
+  --font-body: 'Inter', sans-serif;
+
+  --color-brand-primary:   #4A8C6A;
+  --color-brand-secondary: #2A5440;
+  --color-bg-viewport:     #F8FAFA;
+  --color-bg-card:         #FFFFFF;
+  --color-text-main:       #1A2820;
+  --color-text-muted:      #607A6C;
+  --color-border:          #CAE0D5;
+
+  --card-radius:      14px;
+  --card-bg-opacity:  1.0;
+  --brand-glow-effect: 0 0 0.4rem rgba(74,140,106,.18), 0 0 1.2rem rgba(74,140,106,.07);
+  --card-shadow:       0 4px 20px rgba(26,40,32,.07);
+
+  --hero-text-shadow-strength: 0;
+  --hero-text-stroke-width:    0px;
+  --hero-text-bg-opacity:      0;
+  --hero-text-align:           center;
+
+  --c-blob1: rgba(74,140,106,.18);
+  --c-blob2: rgba(42,84,64,.12);
+  --c-blob3: rgba(140,200,170,.16);
+}

@@ -1,0 +1,30 @@
+/* =========================================================================
+   MALECON BOTANICAL — Crema cálida · Verde botánico · Negro suave
+   Sofisticado, orgánico, contemporáneo. Inspirado en jardines y naturaleza.
+   ========================================================================= */
+:root {
+  --font-h1:   'Montserrat', sans-serif;
+  --font-body: 'Inter', sans-serif;
+
+  --color-brand-primary:   #2E7D52;
+  --color-brand-secondary: #1A4A30;
+  --color-bg-viewport:     #F6FAF7;
+  --color-bg-card:         #FDFFFE;
+  --color-text-main:       #112218;
+  --color-text-muted:      #527563;
+  --color-border:          #C5DDD0;
+
+  --card-radius:      20px;
+  --card-bg-opacity:  1.0;
+  --brand-glow-effect: 0 0 0.6rem rgba(46,125,82,.20), 0 0 1.8rem rgba(46,125,82,.09);
+  --card-shadow:       0 8px 36px rgba(17,34,24,.07), 0 2px 8px rgba(17,34,24,.04);
+
+  --hero-text-shadow-strength: 0;
+  --hero-text-stroke-width:    0px;
+  --hero-text-bg-opacity:      0;
+  --hero-text-align:           center;
+
+  --c-blob1: rgba(46,125,82,.20);
+  --c-blob2: rgba(26,74,48,.14);
+  --c-blob3: rgba(130,200,160,.18);
+}

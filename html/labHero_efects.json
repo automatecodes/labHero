@@ -1,0 +1,87 @@
+{
+  "activePane": "effects",
+  "effects": {
+    "particles": {
+      "speed": 1,
+      "scale": 1.6,
+      "count": 140,
+      "color": "#2FE56B"
+    },
+    "aurora": {
+      "speed": 1,
+      "scale": 0.5,
+      "colorPalette": "fusion",
+      "opacity": 0.6
+    },
+    "video": {
+      "speed": 1.1,
+      "loop": true,
+      "blur": 0,
+      "warmth": 0,
+      "brightness": 110,
+      "contrast": 100,
+      "maskOpacity": 0.1,
+      "rotationInterval": 10,
+      "baseFolder": "/media/",
+      "selectedVideo": ""
+    },
+    "waves": {
+      "speed": 1.5,
+      "scale": 8,
+      "amplitude": 4,
+      "count": 3,
+      "color": "#2FE56B"
+    },
+    "magneticMouse": {
+      "speed": 1.2,
+      "scale": 2.5,
+      "count": 70,
+      "color": "#2FE56B",
+      "attraction": 1.5
+    },
+    "fireworks": {
+      "speed": 1,
+      "scale": 2,
+      "count": 4,
+      "gravity": 1.2,
+      "color": "#2FE56B"
+    },
+    "magnifierGlass": {
+      "speed": 1,
+      "scale": 150,
+      "zoom": 1.5
+    },
+    "imageEffects": {
+      "speed": 1.4,
+      "scale": 0.2,
+      "activeFilter": "border",
+      "imageB64": "",
+      "logoB64Images": "",
+      "logoUrl": "",
+      "carouselEnabled": false,
+      "carouselDelay": 5,
+      "carouselSelectedImage": "",
+      "carouselBaseFolder": "/media/"
+    }
+  },
+  "designSystem": {
+    "typography": {
+      "fontH1": "'Space Grotesk', sans-serif",
+      "fontBody": "'Inter', sans-serif"
+    },
+    "colors": {
+      "brandPrimary": "#2FE56B",
+      "brandSecondary": "#121814",
+      "bgViewport": "#0A0E0B",
+      "cardColorHex": "#121814",
+      "textMain": "#F4F7F4",
+      "textMuted": "#9AA39C",
+      "colorBorder": "#1E2622"
+    },
+    "radius": 14,
+    "cardBgOpacity": 1,
+    "shadowType": "glow",
+    "logoB64": "",
+    "logoUrl": ""
+  }
+}

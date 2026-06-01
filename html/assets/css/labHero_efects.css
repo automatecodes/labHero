@@ -1,0 +1,27 @@
+/* ==========================================================================
+   LABHERO EFFECTS - PARÁMETROS POR DEFECTO GENERADOS DESDE labHero_efects.json
+   Este fichero se carga al inicio como hoja CSS de referencia.
+   La configuración funcional completa sigue en /labHero_efects.json.
+   ========================================================================== */
+
+:root {
+  --labhero-effects-config-source: "labHero_efects.json";
+  --labhero-video-base-folder: "/media/";
+  --labhero-video-selected: "";
+  --labhero-video-speed: 1.1;
+  --labhero-video-brightness: 110%;
+  --labhero-video-contrast: 100%;
+  --labhero-video-mask-opacity: 0.1;
+  --labhero-particles-count: 140;
+  --labhero-particles-scale: 1.6;
+  --labhero-waves-scale: 8px;
+  --labhero-waves-amplitude: 4;
+  --labhero-image-active-filter: "border";
+  --labhero-image-carousel-enabled: false;
+  --labhero-image-carousel-delay: 5s;
+  --labhero-image-carousel-folder: "/media/";
+  --color-brand-primary: #2FE56B;
+  --color-bg-viewport: #0A0E0B;
+  --color-bg-card: #121814;
+  --color-border: #1E2622;
+}

@@ -1,0 +1,75 @@
+{
+  "exported": "2026-06-01T00:00:00.000Z",
+  "effects": {
+    "particles": { "speed": 1.0, "scale": 1.0, "count": 80, "color": "#1A7A42" },
+    "aurora": { "speed": 1.0, "scale": 1.0, "colorPalette": "fusion", "opacity": 0.25 },
+    "video": {
+      "speed": 1.0, "loop": true, "blur": 0, "warmth": 0,
+      "brightness": 100, "contrast": 105, "maskOpacity": 0.35,
+      "baseFolder": "/media/", "selectedVideo": ""
+    },
+    "waves": { "speed": 1.0, "scale": 2.5, "amplitude": 1.3, "count": 3, "color": "#1A7A42" },
+    "magneticMouse": { "speed": 1.2, "scale": 2.5, "count": 70, "color": "#1A7A42", "attraction": 1.5 },
+    "fireworks": { "speed": 1.0, "scale": 2.0, "count": 4, "gravity": 1.2, "color": "#1A7A42" },
+    "magnifierGlass": { "speed": 1.0, "scale": 150, "zoom": 1.5 },
+    "imageEffects": {
+      "speed": 1.0, "scale": 1.5, "activeFilter": "blur",
+      "imageB64": "", "logoB64Images": "", "logoUrl": "",
+      "carouselEnabled": false, "carouselDelay": 5,
+      "carouselSelectedImage": "", "carouselBaseFolder": "/media/",
+      "carouselTransition": "fade"
+    }
+  },
+  "designSystem": {
+    "typography": {
+      "fontH1": "'Space Grotesk', sans-serif",
+      "fontBody": "'Inter', sans-serif"
+    },
+    "colors": {
+      "brandPrimary": "#1A7A42",
+      "brandSecondary": "#0A2218",
+      "bgViewport": "#F5FAF7",
+      "cardColorHex": "#FFFFFF",
+      "textMain": "#0C1F14",
+      "textMuted": "#3D6952",
+      "colorBorder": "#C0D8CA"
+    },
+    "radius": 16,
+    "cardBgOpacity": 1.0,
+    "shadowType": "glow",
+    "logoB64": "",
+    "logoUrl": "",
+    "textStyle": {
+      "preset": "cinematicGlow",
+      "shadowStrength": 0,
+      "strokeWidth": 0,
+      "backdropOpacity": 0,
+      "align": "center"
+    },
+    "header": {
+      "enabled": true,
+      "sticky": true,
+      "height": 78,
+      "logoSize": 54,
+      "logoZoom": 1.0,
+      "logoNoPadding": false,
+      "bgOpacity": 0.86,
+      "blur": 16,
+      "borderOpacity": 0.22,
+      "menuGap": 8,
+      "menuRadius": 999,
+      "menuStyle": "glassPills",
+      "menuHover": "liftGlow",
+      "logoEffect": "glowPulse",
+      "logoShape": "none",
+      "menuAlign": "right",
+      "menuLabels": {
+        "effects": "Efectos Fondo",
+        "images": "Efectos Imagen",
+        "styles": "Estilos Marca",
+        "header": "Header",
+        "videoOptimization": "VideoOtimization"
+      }
+    }
+  }
+}

@@ -1,0 +1,14 @@
+/* =========================================================================
+   LABHERO HEADER v8 - Variables CSS del encabezado principal
+   ========================================================================= */
+
+:root {
+  --app-header-height: 78px;
+  --app-header-logo-size: 54px;
+  --app-header-logo-zoom: 1.0;
+  --app-header-bg-opacity: 0.86;
+  --app-header-blur: 16px;
+  --app-header-border-opacity: 0.22;
+  --app-header-menu-gap: 8px;
+  --app-header-menu-radius: 999px;
+}

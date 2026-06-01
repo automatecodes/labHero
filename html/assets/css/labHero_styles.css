@@ -1,0 +1,56 @@
+/* =========================================================================
+   LABHERO STYLES — Tema Blanc Elegante (blanco · verde esmeralda · negro)
+   Versión 20 — Paleta Malecón de la Salsa
+   ========================================================================= */
+
+:root {
+  /* Tipografía */
+  --font-h1:   'Space Grotesk', sans-serif;
+  --font-body: 'Inter', sans-serif;
+
+  /* Paleta principal: blanco · verde elegante · negro */
+  --color-brand-primary:   #1A7A42;      /* verde esmeralda */
+  --color-brand-secondary: #0A2218;      /* verde muy oscuro */
+  --color-bg-viewport:     #F5FAF7;      /* blanco con matiz verde */
+  --color-bg-card:         #FFFFFF;      /* blanco puro tarjeta */
+  --color-text-main:       #0C1F14;      /* negro con matiz verde */
+  --color-text-muted:      #3D6952;      /* verde grisáceo */
+  --color-border:          #C0D8CA;      /* borde verde suave */
+
+  /* Layout */
+  --card-radius:     16px;
+  --card-bg-opacity: 1.0;
+
+  /* Sombras y glow — verde oscuro sobre blanco */
+  --brand-glow-effect: 0 0 0.4rem rgba(26,122,66,.22), 0 0 1.2rem rgba(26,122,66,.10);
+  --card-shadow:       0 4px 28px rgba(10,34,24,.09), 0 1px 6px rgba(10,34,24,.06);
+
+  /* Texto hero sin recuadro — legible sobre fondos claros */
+  --hero-text-shadow-strength: 0.0;
+  --hero-text-stroke-width:    0px;
+  --hero-text-bg-opacity:      0.0;
+  --hero-text-align:           center;
+
+  /* Parámetros de efectos de fondo */
+  --blur:         74px;
+  --waveWidth:    2px;
+  --mask-opacity: 0.18;
+  --vid-blur:     0px;
+  --vid-warmth:   0%;
+  --vid-brightness: 100%;
+  --vid-saturate:   100%;
+  --vid-contrast:   100%;
+  --speed2a: 7s; --speed2b: 8s; --speed2c: 6.5s;
+  --c-blob1: rgba(26,122,66,.20);
+  --c-blob2: rgba(10,180,100,.16);
+  --c-blob3: rgba(120,200,150,.18);
+
+  /* Panel UI */
+  --panel-bg: #ffffff;
+  --line:     #e2e8f0;
+
+  /* Imagen lab */
+  --img-blur: 0px; --img-border-width: 0px; --img-scale: 1;
+  --img-rotate: 0deg; --img-brightness: 1; --img-contrast: 1;
+  --img-saturate: 100%; --img-hue: 0deg; --img-sepia: 0%;
+}

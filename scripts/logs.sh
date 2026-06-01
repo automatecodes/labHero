@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+set -eu
+cd "$(dirname "$0")/.."
+docker compose --env-file .env logs -f --tail=100

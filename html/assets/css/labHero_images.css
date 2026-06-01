@@ -1,0 +1,15 @@
+/* =========================================================================
+   LABHERO IMAGES v5 - Parámetros por defecto de filtros y carrusel de imagen
+   ========================================================================= */
+
+:root {
+  --labhero-image-anim-speed: 1;
+  --labhero-image-filter-intensity: 1.5;
+  --labhero-image-active-effect-mode: "blur";
+  --labhero-image-logo-url: none;
+  --labhero-carousel-enabled: 0;
+  --labhero-carousel-delay: 5s;
+  --labhero-carousel-folder: "/media/";
+  --labhero-carousel-selected-image: "";
+  --labhero-carousel-transition: "fade";
+}

@@ -1,0 +1,30 @@
+/* =========================================================================
+   MALECON OBSIDIAN — Blanco glacial · Verde neón intenso · Negro obsidiana
+   Contraste extremo, impacto visual máximo. Para hero sections potentes.
+   ========================================================================= */
+:root {
+  --font-h1:   'Bebas Neue', sans-serif;
+  --font-body: 'Inter', sans-serif;
+
+  --color-brand-primary:   #00C060;
+  --color-brand-secondary: #003820;
+  --color-bg-viewport:     #F4FAF6;
+  --color-bg-card:         #FFFFFF;
+  --color-text-main:       #040F09;
+  --color-text-muted:      #2D6044;
+  --color-border:          #A8D8BC;
+
+  --card-radius:      10px;
+  --card-bg-opacity:  1.0;
+  --brand-glow-effect: 0 0 0.6rem rgba(0,192,96,.28), 0 0 2rem rgba(0,192,96,.12);
+  --card-shadow:       0 6px 30px rgba(4,15,9,.10);
+
+  --hero-text-shadow-strength: 0;
+  --hero-text-stroke-width:    0px;
+  --hero-text-bg-opacity:      0;
+  --hero-text-align:           center;
+
+  --c-blob1: rgba(0,192,96,.20);
+  --c-blob2: rgba(0,100,50,.14);
+  --c-blob3: rgba(0,220,120,.18);
+}

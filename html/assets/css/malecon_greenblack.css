@@ -1,0 +1,31 @@
+/* =========================================================================
+   MALECON GREEN BLACK — Verde neón brillante sobre blanco glacial
+   Alto contraste. Impactante. Para secciones hero de máxima energía.
+   Paleta: Blanco casi puro · Verde neón vibrante · Negro profundo
+   ========================================================================= */
+:root {
+  --font-h1:   'Bebas Neue', sans-serif;
+  --font-body: 'Inter', sans-serif;
+
+  --color-brand-primary:   #39FF88;
+  --color-brand-secondary: #051209;
+  --color-bg-viewport:     #F4FBF7;
+  --color-bg-card:         #FFFFFF;
+  --color-text-main:       #051209;
+  --color-text-muted:      #2D6644;
+  --color-border:          #A8DCC0;
+
+  --card-radius:      10px;
+  --card-bg-opacity:  1.0;
+  --brand-glow-effect: 0 0 0.7rem rgba(57,255,136,.30), 0 0 2.2rem rgba(57,255,136,.14);
+  --card-shadow:       0 6px 28px rgba(5,18,9,.10);
+
+  --hero-text-shadow-strength: 0;
+  --hero-text-stroke-width:    0px;
+  --hero-text-bg-opacity:      0;
+  --hero-text-align:           center;
+
+  --c-blob1: rgba(57,255,136,.22);
+  --c-blob2: rgba(5,18,9,.12);
+  --c-blob3: rgba(100,255,170,.18);
+}

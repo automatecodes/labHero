@@ -1,0 +1,3305 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Estudio de Efectos Hero & Sistema de Diseño Consolidado v20</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@500;600;700&family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+
+  <style id="custom-brand-variables">
+    :root {
+      /* TOKENS DE IDENTIDAD UNIFICADOS */
+      --font-h1: 'Space Grotesk', sans-serif;
+      --font-body: 'Inter', sans-serif;
+      
+      --color-brand-primary: #2FE56B;
+      --color-brand-secondary: #121814;
+      --color-bg-viewport: #0A0E0B;
+      --color-bg-card: #121814;
+      --color-text-main: #F4F7F4;
+      --color-text-muted: #9AA39C;
+      --color-border: #1E2622;
+      
+      --card-radius: 14px;
+      --card-bg-opacity: 1.0;
+      --brand-glow-effect: 0 0 0.5rem rgba(47, 229, 107, 0.55), 0 0 1.5rem rgba(47, 229, 107, 0.25);
+      --card-shadow: none;
+      --hero-text-shadow-strength: 1;
+      --hero-text-stroke-width: 0.7px;
+      --hero-text-bg-opacity: 0.0;
+      --hero-text-align: center;
+
+      /* PARÁMETROS INTERNOS DE MOTORES DE EFECTOS DE FONDO */
+      --blur: 74px; --waveWidth: 2.5px; --mask-opacity: 0.35;
+      --vid-blur: 0px; --vid-warmth: 0%; --vid-brightness: 100%; --vid-saturate: 100%; --vid-contrast: 100%;
+      --speed2a: 7s; --speed2b: 8s; --speed2c: 6.5s;
+      --c-blob1: rgba(47, 229, 107, 0.25); --c-blob2: rgba(88, 145, 255, 0.20); --c-blob3: rgba(255, 210, 120, 0.24);
+      
+      --panel-bg: #ffffff; --line: #e2e8f0;
+      --lupa-size: 150px; --lupa-zoom: 1.5;
+
+      /* Parámetros dinámicos de efectos ópticos sobre imágenes */
+      --img-blur: 0px;
+      --img-border-width: 0px;
+      --img-scale: 1;
+      --img-rotate: 0deg;
+      --img-brightness: 1;
+      --img-contrast: 1;
+      --img-saturate: 100%;
+      --img-hue: 0deg;
+      --img-sepia: 0%;
+    }
+  </style>
+
+  <style>
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--font-body);
+      background-color: var(--color-bg-viewport);
+      color:var(--color-text-main);
+      overflow-x:hidden;
+      transition: background-color 0.4s ease, color 0.4s ease;
+    }
+    
+    /* BARRA SUPERIOR */
+    .topbar{position:sticky;top:0;z-index:30;background:rgba(255,255,255,.95);backdrop-filter:blur(10px);border-bottom:1px solid #cbd5e1}
+    .topbar nav{display:flex;gap:4px;flex-wrap:wrap;padding:10px 16px;justify-content:center}
+    .topbar button{background:#fff;color:#0f172a;padding:8px 12px;border:1px solid #cbd5e1;border-radius:999px;font-size:12px;cursor:pointer;transition: all 0.2s;font-weight:600;}
+    .topbar button.active,.topbar button:hover{border-color:var(--color-brand-primary);color:var(--color-brand-primary);background: rgba(47,229,107,0.05);}
+    
+    /* INTERFAZ LABORATORIO */
+    .lab{display:grid;grid-template-columns:1fr 380px;min-height:calc(100vh - 62px)}
+    .hero{
+      position:relative;
+      overflow:hidden;
+      background-color: var(--color-bg-viewport);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      min-height:78vh;
+      border-right:1px solid #cbd5e1;
+      padding:40px;
+      transition: background-color 0.4s ease;
+    }
+    
+    /* LOGOTIPO EN LA ESQUINA SUPERIOR IZQUIERDA */
+    .brand-logo-container {
+      position: absolute;
+      top: 24px;
+      left: 24px;
+      z-index: 100 !important;
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .brand-logo-container img { width: 100%; height: 100%; object-fit: contain; }
+    .brand-logo-container .default-logo-svg {
+      fill: var(--color-brand-primary);
+      width: 48px;
+      height: 48px;
+      transition: fill 0.3s, filter 0.3s;
+      filter: drop-shadow(var(--brand-glow-effect));
+    }
+
+    /* HERO CENTRAL SIN RECUADRO: texto legible sobre vídeo/efectos */
+    .content-wrapper { position: relative; z-index: 4; width: 100%; display: flex; justify-content: center; pointer-events: none; }
+    .content{ position:relative; max-width:920px; text-align:var(--hero-text-align, center); padding:clamp(24px, 4vw, 48px); pointer-events:auto; background:transparent !important; border:0 !important; border-radius:0 !important; box-shadow:none !important; transition:transform .35s ease, filter .35s ease; transform-origin:center center; }
+    .content::before{ content:""; position:absolute; inset:10px 0; z-index:-1; pointer-events:none; opacity:var(--hero-text-bg-opacity, 0); background:radial-gradient(ellipse at center, rgba(10,14,11,.78) 0%, rgba(10,14,11,.42) 46%, transparent 76%); filter:blur(18px); }
+    .content:hover { filter:drop-shadow(0 0 16px rgba(47,229,107,.18)); }
+    .content > * { position:relative; }
+    .hero-text-readable{ text-rendering:optimizeLegibility; -webkit-font-smoothing:antialiased; }
+    .eyebrow-seo{font-family:var(--font-body); color:var(--color-brand-primary); letter-spacing:.14em; text-transform:uppercase; font-size:12px; font-weight:800; margin-bottom:12px; text-shadow:0 2px 8px rgba(0,0,0,.9), 0 0 calc(12px * var(--hero-text-shadow-strength, 1)) var(--color-brand-primary);}
+    h1.heading-h1{font-family:var(--font-h1); font-size:clamp(2.8rem,7vw,5.5rem); line-height:.9; margin:10px 0 14px; font-weight:800; color:var(--color-text-main); text-shadow:0 4px 18px rgba(0,0,0,.95), 0 0 calc(20px * var(--hero-text-shadow-strength, 1)) rgba(47,229,107,.5); -webkit-text-stroke:var(--hero-text-stroke-width, .7px) rgba(0,0,0,.5); paint-order:stroke fill;}
+    h2.heading-h2{font-family:var(--font-h1); font-size:clamp(1.25rem,2.8vw,2rem); line-height:1.15; margin:0 0 18px; font-weight:650; color:var(--color-text-main); text-shadow:0 3px 14px rgba(0,0,0,.9), 0 0 calc(10px * var(--hero-text-shadow-strength, 1)) rgba(47,229,107,.35); -webkit-text-stroke:calc(var(--hero-text-stroke-width, .7px) * .55) rgba(0,0,0,.42);}
+    p.text-normal{font-family:var(--font-body); font-size:clamp(1rem,1.6vw,1.18rem); color:var(--color-text-main); max-width:680px; margin:0 auto 22px; font-weight:500; line-height:1.65; text-shadow:0 2px 10px rgba(0,0,0,.95), 0 0 calc(5px * var(--hero-text-shadow-strength, 1)) rgba(0,0,0,.85);}
+    .comment-seo{font-family:var(--font-body); font-size:12px; font-style:italic; color:var(--color-text-muted); opacity:.9; margin-bottom:24px; display:block; text-shadow:0 2px 8px rgba(0,0,0,.9);}
+    .actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+    .btn{ padding:13px 26px; border-radius: 999px; text-decoration:none; font-weight:600; border:1px solid transparent; cursor:pointer; font-family: var(--font-body); font-size:14px; transition: all 0.22s ease; }
+    .btn-primary{ background-color: var(--color-brand-primary); color: #07160c; }
+    .btn-primary:hover { transform: translateY(-2px); filter: brightness(1.1); box-shadow: var(--brand-glow-effect); }
+    .btn-secondary{ border-color: var(--color-border); color: var(--color-text-main); background-color: transparent; }
+    .btn-secondary:hover { border-color: var(--color-brand-primary); color: var(--color-brand-primary); box-shadow: var(--brand-glow-effect); }
+    
+    /* AISLAMIENTO CRÍTICO DE CAPAS DE EFECTOS */
+    .bg, .bg.effect, .video-hero-container, .image-lab-viewport, .aurora, .waves {
+       position: absolute !important; inset: 0 !important; width: 100% !important; height: 100% !important; overflow: hidden !important;
+    }
+    .bg.effect { z-index: 1; display: block; }
+    
+    #video-target-wrapper, #videoRealNativo, #videoRealYouTube {
+       position: absolute !important; inset: 0 !important; width: 100% !important; height: 100% !important; object-fit: cover !important; display: block !important;
+    }
+    canvas { position: absolute; top: 0; left: 0; width: 100% !important; height: 100% !important; display: block; }
+    .waves svg { width: 100% !important; height: 100% !important; display: block; }
+    .hidden{display:none !important}
+    
+    .lupa-lens {
+       position: absolute; width: var(--lupa-size); height: var(--lupa-size); border-radius: 50%; border: 3px solid var(--color-brand-primary);
+       box-shadow: 0 0 20px rgba(0,0,0,0.5), var(--brand-glow-effect); cursor: none; pointer-events: none; z-index: 100; display: none; overflow: hidden; background-color: var(--color-bg-card);
+    }
+
+    /* FILTROS ÓPTICOS DE IMAGEN */
+    .image-lab-viewport { display: flex; align-items: center; justify-content: center; z-index: 2; pointer-events: none; }
+    .lab-target-image {
+      max-width: 65%; max-height: 65%; border-radius: 16px; object-fit: cover;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+      filter: blur(var(--img-blur, 0px)) brightness(var(--img-brightness, 1)) contrast(var(--img-contrast, 1)) saturate(var(--img-saturate, 100%)) hue-rotate(var(--img-hue, 0deg)) sepia(var(--img-sepia, 0%));
+      outline: var(--img-border-width, 0px) solid var(--color-brand-primary);
+      outline-offset: calc(var(--img-border-width, 0px) * -1);
+      transform: scale(var(--img-scale, 1)) rotate(var(--img-rotate, 0deg));
+    }
+
+    .waves { z-index: 1; opacity: 0.85; }
+    
+
+    /* CAPAS VISUALES COMPLEMENTARIAS: aseguran que todos los efectos sean perceptibles */
+    .overlay-grid {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      pointer-events: none;
+      opacity: 0.18;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: radial-gradient(circle at center, black 0%, transparent 78%);
+    }
+
+    .aurora .blob {
+      position: absolute;
+      width: 44vw;
+      height: 44vw;
+      min-width: 380px;
+      min-height: 380px;
+      border-radius: 999px;
+      filter: blur(var(--blur));
+      opacity: var(--aurora-opacity, 0.35);
+      transform: translate3d(0,0,0);
+      will-change: transform;
+    }
+    .aurora .b1 {
+      left: -12%;
+      top: -15%;
+      background: var(--c-blob1);
+      animation: auroraFloatA var(--speed2a) ease-in-out infinite alternate;
+    }
+    .aurora .b2 {
+      right: -10%;
+      top: 10%;
+      background: var(--c-blob2);
+      animation: auroraFloatB var(--speed2b) ease-in-out infinite alternate;
+    }
+    .aurora .b3 {
+      left: 28%;
+      bottom: -22%;
+      background: var(--c-blob3);
+      animation: auroraFloatC var(--speed2c) ease-in-out infinite alternate;
+    }
+    @keyframes auroraFloatA { from { transform: translate(0,0) scale(1); } to { transform: translate(18%,22%) scale(1.15); } }
+    @keyframes auroraFloatB { from { transform: translate(0,0) scale(1.05); } to { transform: translate(-20%,12%) scale(0.95); } }
+    @keyframes auroraFloatC { from { transform: translate(0,0) scale(0.92); } to { transform: translate(10%,-18%) scale(1.18); } }
+
+    .video-mask {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 50% 45%, rgba(0,0,0,0.08), rgba(0,0,0,var(--mask-opacity)) 72%),
+        linear-gradient(180deg, rgba(10,14,11,0.20), rgba(10,14,11,0.62));
+    }
+    #video-target-wrapper iframe,
+    #video-target-wrapper video {
+      border: 0;
+      filter:
+        blur(var(--vid-blur))
+        sepia(var(--vid-warmth))
+        brightness(var(--vid-brightness))
+        contrast(var(--vid-contrast))
+        saturate(var(--vid-saturate));
+      transform: scale(1.04);
+      transform-origin: center;
+    }
+
+    .wave-wrap {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+    .wave-line {
+      fill: none;
+      stroke: var(--color-brand-primary);
+      stroke-width: var(--waveWidth);
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      filter: drop-shadow(var(--brand-glow-effect));
+    }
+
+    /* CONFIGURACIÓN CONTRASTE PANEL LATERAL */
+    .panel { background-color: #f8fafc !important; padding: 18px; border-left: 1px solid #cbd5e1; max-height: 100vh; overflow-y: auto; }
+    .panel-switcher { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 4px; margin-bottom: 16px; background: #e2e8f0; padding: 4px; border-radius: 8px;}
+    .panel-switcher button { border: none; padding: 8px 4px; font-weight: 700; font-size: 11px; border-radius: 6px; cursor: pointer; background: transparent; color: #64748b; transition: all 0.2s; text-align: center;}
+    .panel-switcher button.active { background: #fff; color: #0f172a; box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
+    .panel h3 { margin: 0 0 4px; color: #0f172a !important; font-weight: 800; }
+    .panel p.desc-panel { font-size: 13px; line-height: 1.45; margin: 0 0 18px; color: #475569 !important; text-align: left; }
+    .section-title { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #059669; margin: 18px 0 10px; font-weight: 800; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px; }
+    .field { margin: 0 0 12px; }
+    .field label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 4px; color: #334155 !important; }
+    .field span.small { color: #475569 !important; font-weight: 700; font-size: 11px; }
+    .field input[type=range], .field select, .field input[type=color] { width: 100%; padding: 6px; border-radius: 6px; border: 1px solid #cbd5e1; outline: none; background: #fff; color: #0f172a; }
+    .field input[type=color] { height: 36px; cursor: pointer; }
+    .field-checkbox { display: flex; align-items: center; gap: 8px; margin: 10px 0; font-size: 12px; font-weight: 700; cursor: pointer; }
+    .row { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; }
+    .io-box { background: #fff; border: 1px dashed #cbd5e1; padding: 12px; border-radius: 12px; margin-bottom: 10px; color: #334155; }
+    .io-box label.file-label { display: block; font-size: 11px; font-weight: 800; text-transform: uppercase; color: #475569; margin-bottom: 6px; cursor: pointer; }
+    .io-box input[type=file] { width: 100%; font-size: 12px; color: #475569; }
+    .export-box { margin-top: 20px; padding-top: 15px; border-top: 2px dashed #cbd5e1; }
+    .btn-export { background: #111827; color: #fff; width: 100%; padding: 12px; border-radius: 8px; font-weight: 700; border: none; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; }
+    .btn-export:hover { background: #1f2937; }
+
+    .field input[type=file] {
+      width: 100%;
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1;
+      background: #fff;
+      color: #0f172a;
+      font-size: 12px;
+    }
+    .control-button {
+      width: 100%;
+      padding: 10px;
+      background: var(--color-brand-primary);
+      color: #07160c;
+      border: none;
+      border-radius: 6px;
+      font-weight: 800;
+      cursor: pointer;
+      margin-top: 6px;
+    }
+    .control-button:hover { filter: brightness(1.08); }
+
+  </style>
+
+  <!-- CSS unificado — generado por ⬇ CSS y guardado en /assets/css/ -->
+  <link id="labhero-default-unified" rel="stylesheet" href="/assets/css/labHero_unified.css">
+</head>
+<body>
+  <div class="topbar">
+    <nav id="effects-nav-bar-container">
+      <button class="tab active" data-target="particles">1. Partículas</button>
+      <button class="tab" data-target="aurora">2. Gradientes líquidos</button>
+      <button class="tab" data-target="video">3. Vídeo Manual 🎬</button>
+      <button class="tab" data-target="waves">4. Ondas cinemáticas 🌊</button>
+      <button class="tab" data-target="magneticMouse">5. Imanes Mouse 🧲</button>
+      <button class="tab" data-target="fireworks">6. Fuegos Artificiales 🎆</button>
+      <button class="tab" data-target="magnifierGlass">7. Lupa de Textos 🔍</button>
+    </nav>
+  </div>
+  <div class="lab">
+    <section class="hero" id="hero-viewport">
+      
+      <div class="lupa-lens" id="lupa-lens-element"></div>
+
+      <div class="brand-logo-container" id="logo-viewport-render">
+         <svg class="default-logo-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+      </div>
+
+      <div id="particles" class="bg effect"></div>
+      <div id="aurora" class="bg effect hidden aurora"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+      <div id="video" class="bg effect hidden video-hero-container"><div id="video-target-wrapper" style="width:100%; height:100%;"></div><div class="video-mask"></div></div>
+      <div id="waves" class="bg effect hidden waves"><div class="wave-wrap"><svg id="waves-svg-element" viewBox="0 0 1600 900" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"></svg></div></div>
+      <div id="magneticMouse" class="bg effect hidden"></div>
+      <div id="fireworks" class="bg effect hidden"></div>
+      <div id="magnifierGlass" class="bg effect hidden"></div>
+      
+      <div id="imageEffectsView" class="image-lab-viewport hidden">
+         <img id="lab-canvas-image-render" class="lab-target-image" src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=1000&auto=format&fit=crop" alt="Lienzo">
+      </div>
+
+      <div id="videoOptimizationView" class="video-optimization-viewport hidden">
+         <div class="video-optimization-card">
+            <div class="video-optimization-kicker">FFmpeg · Optimización para fondos web</div>
+            <h2>VideoOtimization</h2>
+            <p>Convierte vídeos MP4 para uso como fondo web: máximo 1080p, 30 FPS, bitrate controlado y sin audio para favorecer autoplay.</p>
+            <label class="video-optimization-drop" for="video-optimization-input">
+               <strong id="video-optimization-file-name">Seleccionar vídeo .mp4</strong>
+               <span>El procesamiento se ejecuta en el backend Docker con FFmpeg.</span>
+            </label>
+            <input type="file" id="video-optimization-input" accept=".mp4,video/mp4">
+            <button type="button" id="video-optimization-run" class="video-optimization-run" disabled>Optimizar vídeo</button>
+            <div id="video-optimization-status" class="video-optimization-status">Servicio listo. Selecciona un MP4.</div>
+            <video id="video-optimization-preview" controls playsinline class="video-optimization-preview hidden"></video>
+         </div>
+      </div>
+      
+      <div class="overlay-grid"></div>
+      
+      <div class="content-wrapper" id="hero-main-card-wrapper">
+         <div class="content hero-text-readable" id="hero-brand-card">
+           <div class="eyebrow-seo">EL MALECÓN DE LA SALSA</div>
+           <h1 class="heading-h1">Siente el Ritmo, Vive la Pasión</h1>
+           <h2 class="heading-h2">Escuela de Baile Castelldefels</h2>
+           <p class="text-normal">Aprende salsa, bachata y ritmos latinos desde cero con profesionales. Encuentra tu propio estilo, gana confianza y únete a la comunidad de baile más vibrante.</p>
+           <small class="comment-seo">// Clases abiertas para todos los niveles académicos. Reserva tu prueba gratuita.</small>
+           <div class="actions"><button class="btn btn-primary">Apuntarme Ahora</button><button class="btn btn-secondary">Ver Horarios</button></div>
+         </div>
+      </div>
+    </section>
+    
+    <aside class="panel">
+      <div class="panel-switcher">
+         <button id="btn-pane-effects" class="active" onclick="switchControlPane('effects')">Efectos Fondo</button>
+         <button id="btn-pane-images" onclick="switchControlPane('images')">Efectos Imagen</button>
+         <button id="btn-pane-styles" onclick="switchControlPane('styles')">Estilos Marca</button>
+         <button id="btn-pane-video-optimization" onclick="switchControlPane('videoOptimization')">VideoOtimization</button>
+      </div>
+
+      <h3 id="panel-title-text">Estudio de Efectos</h3>
+      <p class="desc-panel" id="panel-desc-text">Calibración independiente y en tiempo real de los lienzos gráficos.</p>
+      
+      <div id="import-zone-effects" class="io-box">
+         <label class="file-label" for="json-import-file">📂 Importar Ajustes JSON</label>
+         <input type="file" id="json-import-file" accept=".json" onchange="importJSONConfig(event)">
+      </div>
+      
+      <div id="import-zone-styles" class="io-box hidden">
+         <label class="file-label" for="css-import-file">🎨 Inyectar Fichero de Marca (.css)</label>
+         <input type="file" id="css-import-file" accept=".css" onchange="importCSSVariables(event)">
+      </div>
+
+      <div id="dynamic-controls"></div>
+
+      <div class="export-box">
+        <button class="btn-export" id="btn-main-export" onclick="executeSmartExport()">
+          <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/><path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3z"/></svg>
+          <span id="export-btn-label">Descargar Ajustes (.json)</span>
+        </button>
+      </div>
+    </aside>
+  </div>
+
+<script>
+let imgAnimationTime = 0;
+// 🆕 MATRIZ COMPLETA DE VIDEOS DETECTADOS EN TIEMPO REAL
+let discoveredLocalVideos = []; 
+let currentLocalVideoIdx = 0;
+
+let state = {
+  activePane: 'effects',
+  effects: {
+    particles: { speed: 1.0, scale: 1.0, count: 80, color: '#2FE56B' },
+    aurora: { speed: 1.0, scale: 1.0, colorPalette: 'fusion', opacity: 0.25 },
+    video: { speed: 1.0, loop: true, blur: 0, warmth: 0, brightness: 100, contrast: 105, maskOpacity: 0.35, baseFolder: "media/" },
+    waves: { speed: 1.0, scale: 2.5, amplitude: 1.3, count: 3, color: '#2FE56B' },
+    magneticMouse: { speed: 1.2, scale: 2.5, count: 70, color: '#2FE56B', attraction: 1.5 },
+    fireworks: { speed: 1.0, scale: 2.0, count: 4, gravity: 1.2, color: '#2FE56B' },
+    magnifierGlass: { speed: 1.0, scale: 150, zoom: 1.5 },
+    imageEffects: { speed: 1.0, scale: 1.5, activeFilter: 'blur', imageB64: "", logoB64Images: "" }
+  },
+  designSystem: {
+    typography: { fontH1: "'Space Grotesk', sans-serif", fontBody: "'Inter', sans-serif" },
+    colors: { brandPrimary: '#2FE56B', brandSecondary: '#121814', bgViewport: '#0A0E0B', cardColorHex: '#121814', textMain: '#F4F7F4', textMuted: '#9AA39C', colorBorder: '#1E2622' },
+    radius: 14, cardBgOpacity: 1.0, shadowType: 'glow', logoB64: "",
+    textStyle: { preset: 'cinematicGlow', shadowStrength: 1.0, strokeWidth: 0.7, backdropOpacity: 0.0, align: 'center' }
+  }
+};
+
+const order = ['particles','aurora','video','waves','magneticMouse','fireworks','magnifierGlass'];
+let activeEffect = 'particles';
+const tabs = document.querySelectorAll('.tab'); 
+
+let globalMouse = { x: null, y: null, isMoving: false, timer: null };
+const viewport = document.getElementById('hero-viewport');
+viewport.addEventListener('mousemove', (e) => {
+  const r = viewport.getBoundingClientRect();
+  globalMouse.x = e.clientX - r.left; globalMouse.y = e.clientY - r.top;
+  globalMouse.isMoving = true;
+  
+  if(state.activePane === 'effects' && activeEffect === 'magnifierGlass') {
+     const lens = document.getElementById('lupa-lens-element'); lens.style.display = 'block';
+     lens.style.left = (globalMouse.x - (state.effects.magnifierGlass.scale / 2)) + 'px';
+     lens.style.top = (globalMouse.y - (state.effects.magnifierGlass.scale / 2)) + 'px';
+  }
+  clearTimeout(globalMouse.timer);
+  globalMouse.timer = setTimeout(() => { globalMouse.isMoving = false; }, 80);
+});
+
+viewport.addEventListener('mouseleave', () => { 
+  globalMouse.x = null; globalMouse.y = null; globalMouse.isMoving = false; 
+  document.getElementById('lupa-lens-element').style.display = 'none';
+});
+
+document.querySelectorAll('#effects-nav-bar-container button').forEach(button => {
+   button.addEventListener('click', (e) => {
+      document.querySelectorAll('#effects-nav-bar-container button').forEach(b => b.classList.remove('active'));
+      e.target.classList.add('active');
+      showEffect(e.target.dataset.target);
+   });
+});
+
+let currentVideoMode = 'youtube'; let videoTimerEngine = null;
+
+// 🆕 MOTOR DE ESCANEO DINÁMICO VIA FETCH (LEE EL AUTOINDEX MULTIMEDIA DE NGINX AL VUELO)
+function scanServerMediaFolder() {
+   const targetUrl = state.effects.video.baseFolder;
+   console.log(`🔍 Escaneando directorio del servidor: "${targetUrl}" en busca de vídeos...`);
+
+   return fetch(targetUrl, { cache: 'no-store' })
+     .then(response => {
+        if(!response.ok) throw new Error(`HTTP ${response.status}`);
+        return response.text();
+     })
+     .then(htmlText => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(htmlText, 'text/html');
+        const links = Array.from(doc.querySelectorAll('a'));
+        const validExtensions = ['.mp4', '.webm', '.mov', '.m4v', '.ogv'];
+
+        discoveredLocalVideos = links
+          .map(link => decodeURIComponent((link.getAttribute('href') || '').split('?')[0].split('#')[0]))
+          .filter(href => href && validExtensions.some(ext => href.toLowerCase().endsWith(ext)))
+          .map(href => href.split('/').pop())
+          .filter((filename, index, arr) => filename && arr.indexOf(filename) === index)
+          .sort((a, b) => a.localeCompare(b, 'es', { numeric: true }));
+
+        currentLocalVideoIdx = Math.min(currentLocalVideoIdx, Math.max(discoveredLocalVideos.length - 1, 0));
+        console.log("🎬 Vídeos descubiertos en /media:", discoveredLocalVideos);
+        updateVideoStatusLabel();
+        return discoveredLocalVideos;
+     })
+     .catch((error) => {
+        console.log("💡 No se pudo leer el autoindex de /media. Comprueba que el servidor permite listar el directorio.", error);
+        discoveredLocalVideos = [];
+        currentLocalVideoIdx = 0;
+        updateVideoStatusLabel("No se detectaron vídeos locales. Se usa YouTube como fallback.");
+        return discoveredLocalVideos;
+     });
+}
+
+// Alias solicitado: scanMediaFolder lee los ficheros reales expuestos por el servidor.
+const scanMediaFolder = scanServerMediaFolder;
+
+function updateVideoStatusLabel(message) {
+   const indicator = document.getElementById('video-status-indicator');
+   if(!indicator) return;
+   if(message) {
+      indicator.textContent = message;
+      return;
+   }
+   indicator.textContent = discoveredLocalVideos.length
+      ? `Vídeos locales detectados: ${discoveredLocalVideos.length}`
+      : "Sin vídeos locales detectados. Fallback YouTube disponible.";
+}
+
+function runSmartVideoFallback() {
+  const wrapper = document.getElementById('video-target-wrapper');
+  wrapper.innerHTML = ''; 
+
+  let statusIndicator = document.getElementById('video-status-indicator');
+  if(!statusIndicator) {
+     statusIndicator = document.createElement('div');
+     statusIndicator.id = 'video-status-indicator';
+     statusIndicator.style = 'position:absolute; bottom:15px; left:15px; max-width:calc(100% - 30px); background:rgba(10,14,11,0.9); color:#fff; padding:6px 12px; border-radius:6px; font-size:11px; font-family:monospace; z-index:10; border:1px solid var(--color-brand-primary); pointer-events:none;';
+     wrapper.parentElement.appendChild(statusIndicator);
+  }
+
+  const youtubeEmbedUrl = "https://www.youtube.com/embed/6BRTX8ClYWg?autoplay=1&mute=1&loop=1&playlist=6BRTX8ClYWg&controls=0&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1";
+
+  if (currentVideoMode === 'youtube' || discoveredLocalVideos.length === 0) {
+     currentVideoMode = 'youtube';
+     statusIndicator.textContent = discoveredLocalVideos.length === 0
+       ? "Canal Activo: Streaming YouTube. No hay vídeos locales detectados en /media."
+       : "Canal Activo: Streaming YouTube. Pulsa «Siguiente Vídeo» para usar /media.";
+     statusIndicator.style.borderColor = "var(--color-brand-primary)";
+     const iframeEl = document.createElement('iframe');
+     iframeEl.id = "videoRealYouTube";
+     iframeEl.src = youtubeEmbedUrl;
+     iframeEl.title = "Vídeo de fondo YouTube";
+     iframeEl.allow = "autoplay; encrypted-media; picture-in-picture";
+     iframeEl.setAttribute('allowfullscreen', '');
+     wrapper.appendChild(iframeEl);
+  } else {
+     const currentFilename = discoveredLocalVideos[currentLocalVideoIdx];
+     const localPath = state.effects.video.baseFolder + currentFilename;
+     statusIndicator.textContent = `Canal Activo: Disco Local ${currentLocalVideoIdx + 1}/${discoveredLocalVideos.length} -> ${localPath}`;
+     statusIndicator.style.borderColor = "var(--color-brand-primary)";
+
+     const videoEl = document.createElement('video');
+     videoEl.id = "videoRealNativo";
+     videoEl.src = localPath;
+     videoEl.autoplay = true;
+     videoEl.muted = true;
+     videoEl.loop = state.effects.video.loop;
+     videoEl.playsInline = true;
+     videoEl.preload = "auto";
+
+     videoEl.addEventListener('error', () => {
+        statusIndicator.textContent = `❌ Error leyendo "${localPath}". Pulsa «Siguiente Vídeo» para continuar.`;
+        statusIndicator.style.borderColor = "#ef4444";
+     });
+     videoEl.addEventListener('loadeddata', () => {
+        statusIndicator.textContent = `Canal Activo: Disco Local ${currentLocalVideoIdx + 1}/${discoveredLocalVideos.length} -> ${localPath}`;
+        statusIndicator.style.borderColor = "var(--color-brand-primary)";
+        videoEl.play().catch(() => {
+          statusIndicator.textContent = `⚠️ El navegador bloqueó autoplay. Pulsa sobre la página o «Siguiente Vídeo».`;
+          statusIndicator.style.borderColor = "#f59e0b";
+        });
+     });
+     wrapper.appendChild(videoEl);
+  }
+  applyVisuals('video');
+}
+
+function handleNextVideoAction() {
+   if(discoveredLocalVideos.length === 0) {
+      currentVideoMode = 'youtube'; runSmartVideoFallback(); return;
+   }
+
+   if (currentVideoMode === 'youtube') {
+      currentVideoMode = 'local'; currentLocalVideoIdx = 0;
+   } else {
+      currentLocalVideoIdx++;
+      if (currentLocalVideoIdx >= discoveredLocalVideos.length) {
+         currentVideoMode = 'youtube'; currentLocalVideoIdx = 0;
+      }
+   }
+   runSmartVideoFallback();
+}
+
+function startMultimediaRotation() {
+   // Motor manual: no se programa ningún temporizador automático.
+   // El vídeo cambia exclusivamente con el botón "Siguiente Vídeo".
+   if(videoTimerEngine) {
+      clearInterval(videoTimerEngine);
+      videoTimerEngine = null;
+   }
+}
+
+function showEffect(name){
+  activeEffect = name;
+  if(videoTimerEngine) clearInterval(videoTimerEngine);
+  
+  document.querySelectorAll('.bg.effect, .video-hero-container').forEach(el=>el.classList.add('hidden'));
+  document.getElementById('lupa-lens-element').style.display = 'none';
+  document.getElementById('hero-brand-card').style.transform = 'none';
+  
+  const element = document.getElementById(name);
+  if(element) { element.classList.remove('hidden'); window.dispatchEvent(new Event('resize')); }
+  if(name === 'video') { currentVideoMode = 'youtube'; runSmartVideoFallback(); }
+  renderControls();
+  applyVisuals(name, true);
+}
+
+function switchControlPane(pane) {
+   state.activePane = pane;
+   document.getElementById('btn-pane-effects').classList.toggle('active', pane === 'effects');
+   document.getElementById('btn-pane-images').classList.toggle('active', pane === 'images');
+   document.getElementById('btn-pane-styles').classList.toggle('active', pane === 'styles');
+   
+   const zoneEffects = document.getElementById('import-zone-effects');
+   const zoneStyles = document.getElementById('import-zone-styles');
+   const labelBtn = document.getElementById('export-btn-label');
+   const topbar = document.getElementById('effects-nav-bar-container');
+   const imgView = document.getElementById('imageEffectsView');
+   const cardWrapper = document.getElementById('hero-main-card-wrapper');
+
+   if(pane === 'effects') {
+      document.getElementById('panel-title-text').innerText = "Estudio de Fondo";
+      document.getElementById('panel-desc-text').innerText = "Calibración independiente de los motores de fondo.";
+      zoneEffects.classList.remove('hidden'); zoneStyles.classList.add('hidden');
+      topbar.classList.remove('hidden'); imgView.classList.add('hidden'); cardWrapper.classList.remove('hidden');
+      labelBtn.textContent = "Descargar Ajustes (.json)";
+      showEffect(activeEffect);
+   } 
+   else if(pane === 'images') {
+      document.getElementById('panel-title-text').innerText = "Efectos sobre Imagen";
+      document.getElementById('panel-desc-text').innerText = "Aplica distorsiones y filtros de vanguardia sobre imágenes corporativas.";
+      zoneEffects.classList.add('hidden'); zoneStyles.classList.add('hidden');
+      topbar.classList.add('hidden'); imgView.classList.remove('hidden'); cardWrapper.classList.add('hidden');
+      document.querySelectorAll('.bg.effect, .video-hero-container').forEach(el=>el.classList.add('hidden'));
+      labelBtn.textContent = "Exportar Imagen CSS (.css)";
+   }
+   else {
+      document.getElementById('panel-title-text').innerText = "Identidad de Marca";
+      document.getElementById('panel-desc-text').innerText = "Personalización de las directrices consolidadas de los archivos CSS.";
+      zoneEffects.classList.add('hidden'); zoneStyles.classList.remove('hidden');
+      topbar.classList.add('hidden'); imgView.classList.add('hidden'); cardWrapper.classList.remove('hidden');
+      labelBtn.textContent = "Exportar Código CSS (.css)";
+      showEffect(activeEffect);
+   }
+   renderControls();
+   setTimeout(() => { window.dispatchEvent(new Event('resize')); }, 50);
+}
+
+
+function appendTextLabel(parent, labelText, htmlFor = "") {
+  const label = document.createElement('label');
+  if(htmlFor) label.htmlFor = htmlFor;
+  label.textContent = labelText;
+  parent.appendChild(label);
+  return label;
+}
+
+function createField(parent, labelText, controlEl) {
+  const field = document.createElement('div');
+  field.className = 'field';
+  appendTextLabel(field, labelText, controlEl && controlEl.id ? controlEl.id : "");
+  if(controlEl) field.appendChild(controlEl);
+  parent.appendChild(field);
+  return field;
+}
+
+function createSectionTitle(parent, titleText) {
+  const title = document.createElement('div');
+  title.className = 'section-title';
+  title.textContent = titleText;
+  parent.appendChild(title);
+  return title;
+}
+
+function createSelectField(parent, labelText, options, currentValue, onChangeFn) {
+  const select = document.createElement('select');
+  options.forEach(opt => {
+    const option = document.createElement('option');
+    option.value = opt.value;
+    option.textContent = opt.label;
+    option.selected = opt.value === currentValue;
+    select.appendChild(option);
+  });
+  select.addEventListener('change', (event) => onChangeFn(event.target.value));
+  createField(parent, labelText, select);
+  return select;
+}
+
+function createFileInputField(parent, labelText, accept, onChangeFn) {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = accept;
+  input.addEventListener('change', onChangeFn);
+  createField(parent, labelText, input);
+  return input;
+}
+
+function createButtonField(parent, buttonText, onClickFn) {
+  const field = document.createElement('div');
+  field.className = 'field';
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'control-button';
+  button.textContent = buttonText;
+  button.addEventListener('click', onClickFn);
+  field.appendChild(button);
+  parent.appendChild(field);
+  return button;
+}
+
+
+// 👑 CONSTRUCTOR CON TEXTOS INTEGRADOS NATIVOS: CONTRASTE OSCURO PERMANENTE ETIQUETAS VISIBLES
+function renderControls() {
+  const container = document.getElementById('dynamic-controls'); container.innerHTML = ''; 
+  
+  if(state.activePane === 'effects') {
+     const est = state.effects[activeEffect];
+     createSectionTitle(container, 'Ajustes del Motor');
+     
+     createSliderField(container, activeEffect === 'video' ? 'Velocidad de reproducción de video' : 'Velocidad de la animación del efecto', 0.1, 3, 0.1, est.speed, 'x', (val) => { updateEffectState(activeEffect, 'speed', val); });
+
+     if (activeEffect === 'particles') {
+       createSliderField(container, 'Escala / Grosor de líneas y nodos', 0.4, 2.5, 0.1, est.scale, 'x', (val) => { updateEffectState(activeEffect, 'scale', val); });
+       createSliderField(container, 'Cantidad de partículas (Densidad)', 20, 200, 10, est.count, '', (val) => { updateEffectState(activeEffect, 'count', val, true); });
+       createColorField(container, 'Color primario de las partículas', est.color, (val) => { updateEffectState(activeEffect, 'color', val); });
+     } 
+     else if (activeEffect === 'aurora') {
+       createSliderField(container, 'Intensidad de Difuminación (Blur)', 0.4, 2.5, 0.1, est.scale, 'x', (val) => { updateEffectState(activeEffect, 'scale', val); });
+       createSliderField(container, 'Opacidad de color de las manchas', 0.05, 0.6, 0.05, est.opacity, '%', (val) => { updateEffectState(activeEffect, 'opacity', val); }, true);
+       
+       createSelectField(container, 'Atmósfera Estilística', [
+          { value: 'fusion', label: 'Verde Fusión' },
+          { value: 'salsa', label: 'Salsa Fuego' },
+          { value: 'bachata', label: 'Bachata Índigo' }
+       ], est.colorPalette, (val) => updateEffectState(activeEffect, 'colorPalette', val));
+     } 
+     else if (activeEffect === 'video') {
+       createButtonField(container, '➡️ Siguiente Vídeo', () => { handleNextVideoAction(); });
+
+       createCheckboxField(container, 'Activar repetición en bucle (Loop)', est.loop, (val) => { updateEffectState(activeEffect, 'loop', val); });
+       createSliderField(container, 'Desenfoque Gaussiano del video (Blur)', 0, 40, 1, est.blur, 'px', (val) => { updateEffectState(activeEffect, 'blur', val); });
+       createSliderField(container, 'Calidez atmosférica (Sepia)', 0, 100, 5, est.warmth, '%', (val) => { updateEffectState(activeEffect, 'warmth', val); });
+       createSliderField(container, 'Intensidad de luces (Brillo)', 40, 180, 5, est.brightness, '%', (val) => { updateEffectState(activeEffect, 'brightness', val); });
+       createSliderField(container, 'Contraste digital de imagen', 50, 150, 5, est.contrast, '%', (val) => { updateEffectState(activeEffect, 'contrast', val); });
+       createSliderField(container, 'Opacidad de la máscara (Filtro)', 0.05, 0.95, 0.05, est.maskOpacity, '%', (val) => { updateEffectState(activeEffect, 'maskOpacity', val); }, true);
+       
+       createSelectField(container, 'Ruta de Directorio Local', [
+          { value: 'media/', label: 'media/ (Relativa)' },
+          { value: '/media/', label: '/media/ (Absoluta Nginx)' }
+       ], est.baseFolder, (val) => {
+          updateEffectState('video', 'baseFolder', val);
+          scanServerMediaFolder().then(() => runSmartVideoFallback());
+       });
+     } 
+     else if (activeEffect === 'waves') {
+       createSliderField(container, 'Espesor / Grosor de línea', 0.5, 8, 0.5, est.scale, 'px', (val) => { updateEffectState(activeEffect, 'scale', val); });
+       createSliderField(container, 'Amplitud de onda (Oscilación)', 0.2, 4, 0.1, est.amplitude, 'x', (val) => { updateEffectState(activeEffect, 'amplitude', val); });
+       createSliderField(container, 'Número de líneas de onda', 1, 5, 1, est.count, '', (val) => { updateEffectState(activeEffect, 'count', val, true); });
+       createColorField(container, 'Color de las ondas', est.color, (val) => { updateEffectState(activeEffect, 'color', val); });
+     } 
+     else if (activeEffect === 'magneticMouse') {
+       createSliderField(container, 'Tamaño del punto', 0.5, 6, 0.1, est.scale, 'px', (val) => { updateEffectState(activeEffect, 'scale', val); });
+       createSliderField(container, 'Cantidad de imanes', 10, 200, 5, est.count, '', (val) => { updateEffectState(activeEffect, 'count', val, true); });
+       createSliderField(container, 'Fuerza magnética del mouse', 0.2, 4, 0.1, est.attraction, 'x', (val) => { updateEffectState(activeEffect, 'attraction', val); });
+       createColorField(container, 'Color de imanes', est.color, (val) => { updateEffectState(activeEffect, 'color', val); });
+     }
+     else if (activeEffect === 'fireworks') {
+        createSliderField(container, 'Frecuencia de lanzamientos', 1, 10, 1, est.count, '', (val) => { updateEffectState(activeEffect, 'count', val, true); });
+        createSliderField(container, 'Tamaño de la explosión', 0.5, 4.5, 0.1, est.scale, 'x', (val) => { updateEffectState(activeEffect, 'scale', val); });
+        createSliderField(container, 'Fuerza de Gravedad (Caída)', 0.2, 3, 0.1, est.gravity, 'g', (val) => { updateEffectState(activeEffect, 'gravity', val); });
+        createColorField(container, 'Color destellos pirotécnicos', est.color, (val) => { updateEffectState(activeEffect, 'color', val); });
+     }
+     else if (activeEffect === 'magnifierGlass') {
+        createSliderField(container, 'Radio de la lente (Tamaño)', 80, 300, 10, est.scale, 'px', (val) => { updateEffectState(activeEffect, 'scale', val, true); });
+        createSliderField(container, 'Factor de Ampliación (Zoom)', 1.1, 3.0, 0.1, est.zoom, 'x', (val) => { updateEffectState(activeEffect, 'zoom', val); });
+     }
+  } 
+  else if(state.activePane === 'images') {
+     const est = state.effects.imageEffects;
+     createSectionTitle(container, 'Lienzo de Entrada');
+     createFileInputField(container, 'Cargar Imagen de Muestra', 'image/*', processLabImageUpload);
+
+     createSectionTitle(container, 'Logotipo Medios (labHeroImages)');
+     createFileInputField(container, 'Subir Logo de Medios Imagen (.png, .jpg)', 'image/*', processLogoUploadImages);
+
+     createSectionTitle(container, 'Ajustes del Filtro');
+     createSliderField(container, 'Rapidez de ejecución del ciclo', 0.1, 3, 0.1, est.speed, 'x', (val) => { updateEffectState('imageEffects', 'speed', val); });
+     createSliderField(container, 'Espesor / Intensidad filtro', 0.1, 4.0, 0.1, est.scale, 'x', (val) => { updateEffectState('imageEffects', 'scale', val); });
+
+     createSelectField(container, 'Filtro Óptico Seleccionado', [
+        { value: 'blur', label: 'Blur rítmico fluctuante' },
+        { value: 'border', label: 'Bordes de Neón latinos' },
+        { value: 'zoomin', label: 'Zoom In pulsante' },
+        { value: 'zoomout', label: 'Zoom Out pulsante' },
+        { value: 'neon', label: 'Filtro Psicodélico Club' },
+        { value: 'rotate', label: 'Giro sincopado de compás' },
+        { value: 'glass', label: 'Efecto Cristal Esmerilado (Glassmorfismo)' },
+        { value: 'vintage', label: 'Textura Vintage Calidez de Bodeguita' }
+     ], est.activeFilter, (val) => { updateEffectState('imageEffects', 'activeFilter', val); });
+  }
+  else {
+     const ds = state.designSystem;
+     createSectionTitle(container, 'Logotipo Corporativo (Fondo)');
+     createFileInputField(container, 'Subir Logo de Fondo (.png, .jpg, .svg)', 'image/*', processLogoUpload);
+
+     createSectionTitle(container, 'Jerarquías Tipográficas');
+     createFontSelectorField(container, 'Fuente Títulos de Secciones', ds.typography.fontH1, 'fontH1');
+     createFontSelectorField(container, 'Fuente de Cuerpo y Párrafos', ds.typography.fontBody, 'fontBody');
+     
+     createSectionTitle(container, 'Esquemas de Color Consolidados');
+     createColorField(container, 'Color de Fondo Escenario (Viewport)', ds.colors.bgViewport, (val) => { updateDesignState('colors', 'bgViewport', val); });
+     createColorField(container, 'Color de Fondo Tarjeta (Card)', ds.colors.cardColorHex, (val) => { updateDesignState('colors', 'cardColorHex', val); });
+     createColorField(container, 'Color Primario Acento (CTAs / Verde)', ds.colors.brandPrimary, (val) => { updateDesignState('colors', 'brandPrimary', val); });
+     createColorField(container, 'Color Secundario (Bordes / Marcos)', ds.colors.colorBorder, (val) => { updateDesignState('colors', 'colorBorder', val); });
+     
+     createSectionTitle(container, 'Textos Hero sin Recuadro');
+     if(!ds.textStyle) ds.textStyle = { preset: 'cinematicGlow', shadowStrength: 1.0, strokeWidth: 0.7, backdropOpacity: 0.0, align: 'center' };
+     createSelectField(container, 'Estilo visual de texto', [
+        { value: 'cinematicGlow', label: 'Cinemático con sombra y glow' },
+        { value: 'cleanContrast', label: 'Contraste limpio sin halo' },
+        { value: 'strongOutline', label: 'Contorno fuerte para vídeo' },
+        { value: 'softBackdrop', label: 'Sombra suave con velo trasero' }
+     ], ds.textStyle.preset, (val) => updateDesignState('textStyle', 'preset', val));
+     createSliderField(container, 'Intensidad de sombra / glow del texto', 0, 2.5, 0.1, ds.textStyle.shadowStrength ?? 1.0, 'x', (val) => updateDesignState('textStyle', 'shadowStrength', val));
+     createSliderField(container, 'Grosor de contorno del título', 0, 2.5, 0.1, ds.textStyle.strokeWidth ?? 0.7, 'px', (val) => updateDesignState('textStyle', 'strokeWidth', val));
+     createSliderField(container, 'Velo oscuro detrás del texto', 0, 0.75, 0.05, ds.textStyle.backdropOpacity ?? 0, '%', (val) => updateDesignState('textStyle', 'backdropOpacity', val), true);
+     createSelectField(container, 'Alineación del bloque de texto', [
+        { value: 'center', label: 'Centrado' },
+        { value: 'left', label: 'Izquierda' },
+        { value: 'right', label: 'Derecha' }
+     ], ds.textStyle.align || 'center', (val) => updateDesignState('textStyle', 'align', val));
+     createSectionTitle(container, 'Parámetros heredados / exportación');
+     createSliderField(container, 'Opacidad de tarjeta heredada (sin recuadro visual)', 0, 1.0, 0.05, ds.cardBgOpacity, '%', (val) => { updateDesignState('', 'cardBgOpacity', val); }, true);
+     createSliderField(container, 'Radius heredado para compatibilidad CSS', 0, 50, 2, ds.radius, 'px', (val) => { updateDesignState('', 'radius', val); });
+     createSelectField(container, 'Sombra heredada para compatibilidad CSS', [
+        { value: 'glow', label: 'Verde Neón Glow' },
+        { value: 'elegant', label: 'Verde Esmeralda Elegant' },
+        { value: 'card', label: 'Sombra Atenuada Suave' },
+        { value: 'none', label: 'Sin Sombra' }
+     ], ds.shadowType, (val) => updateDesignState('', 'shadowType', val));
+  }
+}
+
+function createSliderField(parent, labelText, min, max, step, currentVal, unit, onChangeFn, isPercent = false) {
+  const field = document.createElement('div'); field.className = 'field';
+  const row = document.createElement('div'); row.className = 'row';
+  const lbl = document.createElement('label'); lbl.textContent = labelText;
+  const span = document.createElement('span'); span.className = 'small';
+  span.textContent = isPercent ? Math.round(currentVal * 100) + unit : currentVal + unit;
+  row.appendChild(lbl); row.appendChild(span);
+  
+  const input = document.createElement('input'); input.type = 'range'; input.min = min; input.max = max; input.step = step; input.value = currentVal;
+  input.addEventListener('input', (e) => {
+     const val = parseFloat(e.target.value);
+     span.textContent = isPercent ? Math.round(val * 100) + unit : val + unit; onChangeFn(val);
+  });
+  field.appendChild(row); field.appendChild(input); parent.appendChild(field);
+}
+
+function createColorField(parent, labelText, hexColor, onChangeFn) {
+  const field = document.createElement('div'); field.className = 'field';
+  const lbl = document.createElement('label'); lbl.textContent = labelText; field.appendChild(lbl);
+  const input = document.createElement('input'); input.type = 'color'; input.value = hexColor;
+  input.addEventListener('input', (e) => onChangeFn(e.target.value));
+  field.appendChild(input); parent.appendChild(field);
+}
+
+function createCheckboxField(parent, labelText, isChecked, onChangeFn) {
+  const label = document.createElement('label'); label.className = 'field-checkbox';
+  const input = document.createElement('input'); input.type = 'checkbox'; input.checked = isChecked;
+  input.addEventListener('change', (e) => onChangeFn(e.target.checked));
+  label.appendChild(input); label.appendChild(document.createTextNode(labelText));
+  parent.appendChild(label);
+}
+
+function createFontSelectorField(parent, labelText, currentFont, propertyKey) {
+   return createSelectField(parent, labelText, [
+      { value: "'Space Grotesk', sans-serif", label: "Space Grotesk" },
+      { value: "'Bebas Neue', sans-serif", label: "Bebas Neue" },
+      { value: "'Inter', sans-serif", label: "Inter" },
+      { value: "'Montserrat', sans-serif", label: "Montserrat" }
+   ], currentFont, (val) => updateDesignState('typography', propertyKey, val));
+}
+
+
+function updateEffectState(effectName, propertyName, value, requiresRebuild = false) {
+  if(!state.effects[effectName]) return;
+  state.effects[effectName][propertyName] = value;
+
+  if(effectName === 'fireworks' && propertyName === 'color') fireworkConfig.color = value;
+  if(effectName === 'magnifierGlass') {
+    document.documentElement.style.setProperty('--lupa-size', state.effects.magnifierGlass.scale + 'px');
+    document.documentElement.style.setProperty('--lupa-zoom', state.effects.magnifierGlass.zoom);
+  }
+
+  applyVisuals(effectName, requiresRebuild);
+  if(effectName === 'video' && ['loop', 'speed', 'blur', 'warmth', 'brightness', 'contrast', 'maskOpacity'].includes(propertyName)) {
+    applyVisuals('video');
+  }
+}
+
+function updateDesignState(sectionName, propertyName, value) {
+  if(sectionName && state.designSystem[sectionName]) {
+    state.designSystem[sectionName][propertyName] = value;
+  } else {
+    state.designSystem[propertyName] = value;
+  }
+  applyDesignTokens();
+}
+
+function triggerDownload(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
+function readFileAsDataURL(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+function processLabImageUpload(event) {
+  const file = event.target.files && event.target.files[0];
+  if(!file) return;
+  readFileAsDataURL(file).then(dataUrl => {
+    state.effects.imageEffects.imageB64 = dataUrl;
+    const image = document.getElementById('lab-canvas-image-render');
+    if(image) image.src = dataUrl;
+  });
+}
+
+function processLogoUploadImages(event) {
+  const file = event.target.files && event.target.files[0];
+  if(!file) return;
+  readFileAsDataURL(file).then(dataUrl => {
+    state.effects.imageEffects.logoB64Images = dataUrl;
+  });
+}
+
+function processLogoUpload(event) {
+  const file = event.target.files && event.target.files[0];
+  if(!file) return;
+  readFileAsDataURL(file).then(dataUrl => {
+    state.designSystem.logoB64 = dataUrl;
+    renderLogoOnViewport();
+  });
+}
+
+function renderLogoOnViewport() {
+  const holder = document.getElementById('logo-viewport-render');
+  if(!holder) return;
+  if(state.designSystem.logoB64) {
+    holder.innerHTML = '';
+    const img = document.createElement('img');
+    img.src = state.designSystem.logoB64;
+    img.alt = 'Logotipo corporativo';
+    holder.appendChild(img);
+  }
+}
+
+function importJSONConfig(event) {
+  const file = event.target.files && event.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const importedData = JSON.parse(reader.result);
+      if(importedData.effects) state.effects = { ...state.effects, ...importedData.effects };
+      if(importedData.designSystem) state.designSystem = { ...state.designSystem, ...importedData.designSystem };
+      applyDesignTokens();
+      showEffect(activeEffect);
+      renderControls();
+      renderLogoOnViewport();
+    } catch(error) {
+      alert('El JSON importado no es válido.');
+      console.error(error);
+    }
+  };
+  reader.readAsText(file);
+}
+
+function importCSSVariables(event) {
+  const file = event.target.files && event.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = () => parseAndApplyCSSText(reader.result);
+  reader.readAsText(file);
+}
+
+function parseAndApplyCSSText(cssText) {
+  const styleEl = document.getElementById('custom-brand-variables');
+  if(styleEl && cssText.includes(':root')) {
+    styleEl.textContent = cssText;
+  }
+
+  const extractVar = (name) => {
+    const match = cssText.match(new RegExp(name.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&') + '\\s*:\\s*([^;]+);'));
+    return match ? match[1].trim() : null;
+  };
+
+  const mappings = [
+    ['--color-brand-primary', 'colors', 'brandPrimary'],
+    ['--color-bg-viewport', 'colors', 'bgViewport'],
+    ['--color-bg-card', 'colors', 'cardColorHex'],
+    ['--color-border', 'colors', 'colorBorder'],
+    ['--font-h1', 'typography', 'fontH1'],
+    ['--font-body', 'typography', 'fontBody']
+  ];
+  mappings.forEach(([cssVar, section, key]) => {
+    const val = extractVar(cssVar);
+    if(val && state.designSystem[section]) state.designSystem[section][key] = val;
+  });
+  const radius = extractVar('--card-radius');
+  if(radius) state.designSystem.radius = parseFloat(radius) || state.designSystem.radius;
+  if(!state.designSystem.textStyle) state.designSystem.textStyle = { preset: 'cinematicGlow', shadowStrength: 1.0, strokeWidth: 0.7, backdropOpacity: 0.0, align: 'center' };
+  const cssTextPreset = extractVar('--hero-text-style-preset');
+  const cssShadowStrength = extractVar('--hero-text-shadow-strength');
+  const cssStrokeWidth = extractVar('--hero-text-stroke-width');
+  const cssBackdrop = extractVar('--hero-text-bg-opacity');
+  const cssAlign = extractVar('--hero-text-align');
+  if(cssTextPreset) state.designSystem.textStyle.preset = cssTextPreset.replace(/["']/g, '').trim();
+  if(cssShadowStrength) state.designSystem.textStyle.shadowStrength = parseFloat(cssShadowStrength);
+  if(cssStrokeWidth) state.designSystem.textStyle.strokeWidth = parseFloat(cssStrokeWidth);
+  if(cssBackdrop) state.designSystem.textStyle.backdropOpacity = parseFloat(cssBackdrop);
+  if(cssAlign) state.designSystem.textStyle.align = cssAlign.trim();
+  applyDesignTokens();
+  renderControls();
+}
+
+
+function applyDesignTokens() {
+   const ds = state.designSystem;
+   const root = document.documentElement;
+   
+   root.style.setProperty('--font-h1', ds.typography.fontH1);
+   root.style.setProperty('--font-body', ds.typography.fontBody);
+   root.style.setProperty('--color-brand-primary', ds.colors.brandPrimary);
+   root.style.setProperty('--color-brand-secondary', ds.colors.brandSecondary);
+   root.style.setProperty('--color-bg-viewport', ds.colors.bgViewport);
+   root.style.setProperty('--color-border', ds.colors.colorBorder);
+   root.style.setProperty('--card-radius', ds.radius + 'px');
+   
+   const hex = ds.colors.cardColorHex;
+   const r = parseInt(hex.slice(1, 3), 16), g = parseInt(hex.slice(3, 5), 16), b = parseInt(hex.slice(5, 7), 16);
+   root.style.setProperty('--color-bg-card', `rgba(${r}, ${g}, ${b}, ${ds.cardBgOpacity})`);
+
+   const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+   
+   document.querySelectorAll('.blob').forEach(blob => {
+      blob.style.mixBlendMode = (brightness < 128) ? 'screen' : 'multiply';
+   });
+
+   if (brightness < 128) { ds.colors.textMain = '#ffffff'; ds.colors.textMuted = '#9AA39C'; }
+   else { ds.colors.textMain = '#0F172A'; ds.colors.textMuted = '#4a5a46'; }
+   
+   root.style.setProperty('--color-text-main', ds.colors.textMain);
+   root.style.setProperty('--color-text-muted', ds.colors.textMuted);
+   
+   const shadowMap = {
+      glow: `0 0 0.5rem ${ds.colors.brandPrimary}88, 0 0 1.5rem ${ds.colors.brandPrimary}44`,
+      elegant: `0 18px 50px ${ds.colors.brandPrimary}33`,
+      card: '0 18px 45px rgba(0,0,0,0.35)',
+      none: 'none'
+   };
+   root.style.setProperty('--brand-glow-effect', shadowMap.glow);
+   root.style.setProperty('--card-shadow', shadowMap[ds.shadowType] || 'none');
+
+   if(!ds.textStyle) ds.textStyle = { preset: 'cinematicGlow', shadowStrength: 1.0, strokeWidth: 0.7, backdropOpacity: 0.0, align: 'center' };
+   const textPreset = ds.textStyle.preset || 'cinematicGlow';
+   let shadowStrength = Number(ds.textStyle.shadowStrength ?? 1.0);
+   let strokeWidth = Number(ds.textStyle.strokeWidth ?? 0.7);
+   let backdropOpacity = Number(ds.textStyle.backdropOpacity ?? 0.0);
+   if(textPreset === 'cleanContrast') { shadowStrength = Math.min(shadowStrength, 0.85); strokeWidth = Math.min(strokeWidth, 0.4); backdropOpacity = Math.min(backdropOpacity, 0.12); }
+   if(textPreset === 'strongOutline') { shadowStrength = Math.max(shadowStrength, 1.1); strokeWidth = Math.max(strokeWidth, 1.1); backdropOpacity = Math.max(backdropOpacity, 0.10); }
+   if(textPreset === 'softBackdrop') { shadowStrength = Math.max(shadowStrength, 0.75); strokeWidth = Math.min(strokeWidth, 0.65); backdropOpacity = Math.max(backdropOpacity, 0.32); }
+   root.style.setProperty('--hero-text-shadow-strength', String(shadowStrength));
+   root.style.setProperty('--hero-text-stroke-width', strokeWidth + 'px');
+   root.style.setProperty('--hero-text-bg-opacity', String(backdropOpacity));
+   root.style.setProperty('--hero-text-align', ds.textStyle.align || 'center');
+
+   if(activeEffect === 'waves') {
+      const lines = document.querySelectorAll('.wave-line');
+      lines.forEach(l => l.style.stroke = state.effects.waves.color || ds.colors.brandPrimary);
+   }
+   if(typeof window.updateAppHeaderV8 === 'function') window.updateAppHeaderV8();
+}
+
+function applyVisuals(effect, requiresRebuild = false) {
+  const est = state.effects[effect];
+  const root = document.documentElement;
+  if(!est) return;
+
+  if (effect === 'particles') {
+    particleConfig.speed = est.speed; particleConfig.scale = est.scale;
+    if (requiresRebuild) particleConfig.rebuildCount = est.count;
+  } 
+  if (effect === 'aurora') {
+    root.style.setProperty('--blur', (74 * est.scale) + 'px');
+    root.style.setProperty('--speed2a', (7 / est.speed).toFixed(2) + 's');
+    root.style.setProperty('--speed2b', (8 / est.speed).toFixed(2) + 's');
+    root.style.setProperty('--speed2c', (6.5 / est.speed).toFixed(2) + 's');
+    root.style.setProperty('--aurora-opacity', est.opacity);
+    const palettes = {
+      fusion: ['rgba(47, 229, 107, 0.32)', 'rgba(88, 145, 255, 0.24)', 'rgba(255, 210, 120, 0.24)'],
+      salsa: ['rgba(255, 68, 68, 0.30)', 'rgba(255, 166, 77, 0.26)', 'rgba(47, 229, 107, 0.18)'],
+      bachata: ['rgba(109, 40, 217, 0.30)', 'rgba(59, 130, 246, 0.26)', 'rgba(236, 72, 153, 0.20)']
+    };
+    const selected = palettes[est.colorPalette] || palettes.fusion;
+    root.style.setProperty('--c-blob1', selected[0]);
+    root.style.setProperty('--c-blob2', selected[1]);
+    root.style.setProperty('--c-blob3', selected[2]);
+  }
+  if (effect === 'video') {
+    const vid = document.getElementById('videoRealNativo');
+    if(vid) { vid.playbackRate = est.speed; vid.loop = est.loop; }
+    root.style.setProperty('--mask-opacity', est.maskOpacity);
+    root.style.setProperty('--vid-blur', est.blur + 'px');
+    root.style.setProperty('--vid-warmth', est.warmth + '%');
+    root.style.setProperty('--vid-brightness', est.brightness + '%');
+    root.style.setProperty('--vid-contrast', est.contrast + '%');
+  }
+  if (effect === 'waves') {
+    waveConfig.speed = est.speed; waveConfig.scale = est.scale; waveConfig.amplitude = est.amplitude;
+    if (requiresRebuild) waveConfig.rebuildLines = parseInt(est.count);
+    root.style.setProperty('--waveWidth', est.scale + 'px');
+    document.querySelectorAll('.wave-line').forEach(line => line.style.stroke = est.color);
+  }
+  if (effect === 'magneticMouse') {
+    magneticConfig.speed = est.speed; magneticConfig.scale = est.scale; magneticConfig.attraction = est.attraction;
+    if (requiresRebuild) magneticConfig.rebuildCount = est.count;
+  }
+  if (effect === 'fireworks') {
+     fireworkConfig.speed = est.speed; fireworkConfig.scale = est.scale; fireworkConfig.gravity = est.gravity; fireworkConfig.color = est.color;
+     if (requiresRebuild) fireworkConfig.rebuildRate = est.count;
+  }
+}
+
+function stepImageEffectsLoop() {
+   const est = state.effects.imageEffects;
+   const root = document.documentElement;
+   imgAnimationTime += 0.02 * est.speed;
+   
+   if(state.activePane !== 'images') { rootStylePropertyReset(); requestAnimationFrame(stepImageEffectsLoop); return; }
+   rootStylePropertyReset();
+
+   if(est.activeFilter === 'blur') {
+      root.style.setProperty('--img-blur', (Math.abs(Math.sin(imgAnimationTime)) * 12 * est.scale).toFixed(1) + 'px');
+   }
+   else if(est.activeFilter === 'border') {
+      root.style.setProperty('--img-border-width', (Math.abs(Math.cos(imgAnimationTime)) * 14 * est.scale).toFixed(1) + 'px');
+   }
+   else if(est.activeFilter === 'zoomin') {
+      root.style.setProperty('--img-scale', (1.0 + (Math.abs(Math.sin(imgAnimationTime * 0.4)) * 0.5 * est.scale)).toFixed(2));
+   }
+   else if(est.activeFilter === 'zoomout') {
+      root.style.setProperty('--img-scale', (1.3 - (Math.abs(Math.sin(imgAnimationTime * 0.4)) * 0.4 * est.scale)).toFixed(2));
+   }
+   else if(est.activeFilter === 'neon') {
+      root.style.setProperty('--img-saturate', (100 + Math.abs(Math.sin(imgAnimationTime)) * 255 * est.scale) + '%');
+      root.style.setProperty('--img-hue', Math.floor(Math.abs(Math.sin(imgAnimationTime)) * 120) + 'deg');
+   }
+   else if(est.activeFilter === 'rotate') {
+      root.style.setProperty('--img-rotate', (Math.sin(imgAnimationTime) * 30 * est.scale).toFixed(1) + 'deg');
+   }
+   else if(est.activeFilter === 'glass') {
+      root.style.setProperty('--img-blur', (3 * est.scale).toFixed(1) + 'px');
+      root.style.setProperty('--img-brightness', (1.0 + Math.abs(Math.sin(imgAnimationTime))*0.1).toFixed(2));
+      root.style.setProperty('--img-contrast', '1.1');
+   }
+   else if(est.activeFilter === 'vintage') {
+      root.style.setProperty('--img-sepia', (75 * est.scale).toFixed(1) + '%');
+      root.style.setProperty('--img-brightness', '0.94');
+   }
+   requestAnimationFrame(stepImageEffectsLoop);
+}
+
+function rootStylePropertyReset() {
+   const root = document.documentElement;
+   root.style.setProperty('--img-blur', '0px'); root.style.setProperty('--img-border-width', '0px');
+   root.style.setProperty('--img-scale', '1'); root.style.setProperty('--img-rotate', '0deg');
+   root.style.setProperty('--img-sepia', '0%'); root.style.setProperty('--img-brightness', '1');
+   root.style.setProperty('--img-contrast', '1'); root.style.setProperty('--img-saturate', '100%');
+   root.style.setProperty('--img-hue', '0deg');
+}
+
+function executeSmartExport() {
+   if (state.activePane === 'effects') {
+      const dataString = JSON.stringify(state, null, 2);
+      triggerDownload(new Blob([dataString], { type: 'application/json' }), 'labHero_efects.json');
+   } 
+   else if(state.activePane === 'images') {
+      const im = state.effects.imageEffects;
+      const mediaLogoVar = im.logoB64Images ? `url("${im.logoB64Images}")` : "none";
+      const cssImgString = `/* =========================================================================\n` +
+                           `   LABHERO IMAGES - EXPORTACIÓN COMPLETA DE FILTROS DE FOTO\n` +
+                           `   ========================================================================= */\n\n` +
+                           `.clase-imagen-destino {\n` +
+                           `  --anim-speed: ${im.speed}x;\n` +
+                           `  --filter-intensity: ${im.scale};\n` +
+                           `  --active-effect-mode: "${im.activeFilter}";\n` +
+                           `  --media-logo-folder: ${mediaLogoVar};\n` +
+                           `}`;
+      triggerDownload(new Blob([cssImgString], { type: 'text/css' }), 'labHeroImages.css');
+   }
+   else {
+      const ds = state.designSystem;
+      const textStyle = ds.textStyle || { preset: 'cinematicGlow', shadowStrength: 1, strokeWidth: 0.7, backdropOpacity: 0, align: 'center' };
+      const cssString = `/* TOKENS EXPORTADOS CONSOLIDACIÓN V19 - HERO SIN RECUADRO */
+
+:root {
+  --font-h1: ${ds.typography.fontH1};
+  --font-body: ${ds.typography.fontBody};
+  --color-brand-primary: ${ds.colors.brandPrimary};
+  --color-bg-viewport: ${ds.colors.bgViewport};
+  --color-bg-card: transparent;
+  --card-radius: 0px;
+  --hero-text-style-preset: "${textStyle.preset}";
+  --hero-text-shadow-strength: ${textStyle.shadowStrength};
+  --hero-text-stroke-width: ${textStyle.strokeWidth}px;
+  --hero-text-bg-opacity: ${textStyle.backdropOpacity};
+  --hero-text-align: ${textStyle.align};
+}
+
+.hero-brand-card, .content {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+.hero-brand-card h1, .content h1 {
+  text-shadow: 0 4px 18px rgba(0,0,0,.95), 0 0 calc(20px * var(--hero-text-shadow-strength)) rgba(47,229,107,.5);
+  -webkit-text-stroke: var(--hero-text-stroke-width) rgba(0,0,0,.5);
+}`;
+      triggerDownload(new Blob([cssString], { type: 'text/css' }), 'labHero_styles.css');
+   }
+}
+
+// INYECCIÓN DE MOTORES VECTORIALES NATIVOS
+const particleConfig = {speed:1, scale:1, rebuildCount: 80};
+(function(){
+  const holder = document.getElementById('particles'); const canvas = document.createElement('canvas'); holder.appendChild(canvas); const ctx = canvas.getContext('2d');
+  let w,h,particles=[], mouse={x:null,y:null}, lastCount = 80;
+  function resize(){w=canvas.width=holder.clientWidth;h=canvas.height=holder.clientHeight;create();}
+  function create(){ lastCount = particleConfig.rebuildCount; particles=Array.from({length:lastCount},()=>({x:Math.random()*w,y:Math.random()*h,vx:(Math.random()-.5)*.45,vy:(Math.random()-.5)*.45,r:Math.random()*1.8+1.2}));}
+  function step(){
+    if(state.activePane !== 'effects' || activeEffect !== 'particles') { requestAnimationFrame(step); return; }
+    if(particleConfig.rebuildCount !== lastCount) create();
+    ctx.clearRect(0,0,w,h); mouse.x = globalMouse.x; mouse.y = globalMouse.y;
+    for(const p of particles){p.x+=p.vx*particleConfig.speed;p.y+=p.vy*particleConfig.speed;if(p.x<0||p.x>w)p.vx*=-1;if(p.y<0||p.y>h)p.vy*=-1;}
+    const dist=135*particleConfig.scale;
+    for(let i=0; i<particles.length; i++){
+      for(let j=i+1; j<particles.length; j++){
+        const a=particles[i], b=particles[j]; const d=Math.hypot(a.x-b.x,a.y-b.y);
+        if(d<dist){ctx.strokeStyle=(state.effects.particles.color || state.designSystem.colors.brandPrimary) + Math.floor((1-d/dist)*99).toString(16).padStart(2,'0');ctx.lineWidth=1.2*particleConfig.scale;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();}
+      }
+      const p=particles[i]; let glow=0; if(mouse.x!==null){const dm=Math.hypot(p.x-mouse.x,p.y-mouse.y); if(dm<120) glow=1-dm/120;}
+      ctx.fillStyle=state.effects.particles.color || state.designSystem.colors.brandPrimary; ctx.beginPath(); ctx.arc(p.x,p.y,(p.r+glow*1.8)*particleConfig.scale,0,Math.PI*2); ctx.fill();
+    }
+    requestAnimationFrame(step);
+  }
+  window.addEventListener('resize',resize); resize(); step();
+})();
+
+const waveConfig = {speed:1, scale:2.5, amplitude:1.3, rebuildLines:3};
+(function(){
+  const svgEl = document.getElementById('waves-svg-element'); let t = 0, lastLineCount = 3;
+  function buildWaves() {
+     svgEl.innerHTML = ''; lastLineCount = waveConfig.rebuildLines;
+     for(let i=0; i<lastLineCount; i++) {
+        const path = document.createElementNS("http://www.w3.org/2000/svg", "path"); path.id = `dynamic-wave-path-${i}`;
+        path.className.baseVal = 'wave-line'; path.style.stroke = state.effects.waves.color || state.designSystem.colors.brandPrimary;
+        path.style.opacity = i === 0 ? "1" : (0.7 / i).toFixed(2); svgEl.appendChild(path);
+     }
+  }
+  function animate(){
+    if(state.activePane === 'effects' && activeEffect === 'waves') {
+      if(waveConfig.rebuildLines !== lastLineCount) buildWaves();
+      t += 0.015 * waveConfig.speed; let amp = waveConfig.amplitude;
+      const paths = svgEl.querySelectorAll('.wave-line');
+      paths.forEach((p, index) => {
+         let shift = index * 0.7; let hBase = 620 + (index * 45);
+         let dAttr = `M0,${hBase} C220,${hBase - 60 + Math.sin(t + shift)*22*amp} 320,${hBase + 100 + Math.cos(t + shift)*18*amp} 520,${hBase} C760,${hBase - 60 + Math.sin(t + 1 + shift)*28*amp} 860,${hBase + 140 + Math.cos(t + 1 + shift)*20*amp} 1100,${hBase + 50} C1280,${hBase - 15 + Math.sin(t + 2 + shift)*16*amp} 1420,${hBase} 1600,${hBase}`;
+         p.setAttribute('d', dAttr); p.style.stroke = state.effects.waves.color || state.designSystem.colors.brandPrimary;
+      });
+    }
+    requestAnimationFrame(animate);
+  }
+  buildWaves(); animate();
+})();
+
+const magneticConfig = {speed:1.2, scale:2.5, rebuildCount: 70, attraction: 1.5};
+/* Repulsión por click — compartido entre main script y V5 IIFE */
+const magneticClickRepulse = { x: 0, y: 0, force: 0 };
+(function(){
+  const holder = document.getElementById('magneticMouse'); const canvas = document.createElement('canvas'); holder.appendChild(canvas); const ctx = canvas.getContext('2d');
+  let w,h,nodes=[], lastCount = 70;
+  function resize(){w=canvas.width=holder.clientWidth;h=canvas.height=holder.clientHeight;create();}
+  function create(){
+    lastCount = magneticConfig.rebuildCount;
+    nodes = Array.from({length:lastCount}, () => ({ x: Math.random()*w, y: Math.random()*h, vx: (Math.random() - 0.5) * 1.5, vy: (Math.random() - 0.5) * 1.5, r: Math.random() * 2.5 + 1.5 }));
+  }
+  function step(){
+    if(state.activePane !== 'effects' || activeEffect !== 'magneticMouse') { requestAnimationFrame(step); return; }
+    if(magneticConfig.rebuildCount !== lastCount) create();
+    ctx.clearRect(0,0,w,h);
+    const mx = globalMouse.x, my = globalMouse.y, moving = globalMouse.isMoving;
+    const repulseActive = magneticClickRepulse.force > 0.05;
+    for(let i=0; i<nodes.length; i++) {
+      let p = nodes[i];
+      /* Atracción al ratón */
+      if (mx !== null && moving) {
+         let dx = mx - p.x; let dy = my - p.y; let dist = Math.hypot(dx, dy);
+         if(dist > 5) { let force = 0.14 * magneticConfig.attraction; p.vx += (dx / dist) * force; p.vy += (dy / dist) * force; }
+      } else {
+         p.vx += (Math.random() - 0.5) * 0.35 * magneticConfig.speed; p.vy += (Math.random() - 0.5) * 0.35 * magneticConfig.speed;
+      }
+      /* Repulsión explosiva al hacer click */
+      if(repulseActive) {
+        let rdx = p.x - magneticClickRepulse.x; let rdy = p.y - magneticClickRepulse.y;
+        let rdist = Math.hypot(rdx, rdy) || 1;
+        let falloff = Math.max(0, 1 - rdist / 500);
+        let rf = magneticClickRepulse.force * falloff * 0.8;
+        p.vx += (rdx / rdist) * rf; p.vy += (rdy / rdist) * rf;
+      }
+      p.x += p.vx * (magneticConfig.speed * 0.8); p.y += p.vy * (magneticConfig.speed * 0.8); p.vx *= 0.92; p.vy *= 0.92;
+      if(p.x - p.r < 0) { p.x = p.r; p.vx *= -1; } if(p.x + p.r > w) { p.x = w - p.r; p.vx *= -1; }
+      if(p.y - p.r < 0) { p.y = p.r; p.vy *= -1; } if(p.y + p.r > h) { p.y = h - p.r; p.vy *= -1; }
+      ctx.fillStyle = state.effects.magneticMouse.color || state.designSystem.colors.brandPrimary; ctx.beginPath(); ctx.arc(p.x, p.y, p.r * magneticConfig.scale, 0, Math.PI*2); ctx.fill();
+    }
+    if(repulseActive) magneticClickRepulse.force *= 0.86;
+    requestAnimationFrame(step);
+  }
+  window.addEventListener('resize',resize); resize(); step();
+})();
+
+const fireworkConfig = {speed:1.0, scale:2.0, rebuildRate:4, gravity:1.2, color:'#2FE56B'};
+(function(){
+  const holder = document.getElementById('fireworks'); const canvas = document.createElement('canvas'); holder.appendChild(canvas); const ctx = canvas.getContext('2d');
+  let w,h, rockets = [], shards = [];
+  function resize(){w=canvas.width=holder.clientWidth;h=canvas.height=holder.clientHeight;}
+  function launchRocket() {
+     if(rockets.length < fireworkConfig.rebuildRate) {
+        rockets.push({ x: Math.random() * (w - 100) + 50, y: h, tx: Math.random() * w, ty: Math.random() * (h * 0.5) + 50, v: (Math.random() * 3 + 4) * fireworkConfig.speed });
+     }
+  }
+  function step(){
+    if(state.activePane !== 'effects' || activeEffect !== 'fireworks') { rockets = []; shards = []; requestAnimationFrame(step); return; }
+    ctx.clearRect(0,0,w,h); if(Math.random() < 0.03) launchRocket();
+    for(let i = rockets.length - 1; i >= 0; i--) {
+       let r = rockets[i]; let dx = r.tx - r.x; let dy = r.ty - r.y; let dist = Math.hypot(dx, dy);
+       if(dist < 8) {
+          let count = Math.floor(Math.random() * 30 + 30);
+          for(let s=0; s<count; s++) {
+             let angle = Math.random() * Math.PI * 2; let force = Math.random() * 4 + 1;
+             shards.push({ x: r.x, y: r.y, vx: Math.cos(angle) * force * fireworkConfig.speed, vy: Math.sin(angle) * force * fireworkConfig.speed, alpha: 1.0, size: (Math.random() * 1.5 + 1) * fireworkConfig.scale });
+          }
+          rockets.splice(i, 1);
+       } else {
+          r.x += (dx / dist) * r.v; r.y += (dy / dist) * r.v;
+          ctx.fillStyle = fireworkConfig.color; ctx.beginPath(); ctx.arc(r.x, r.y, 3, 0, Math.PI*2); ctx.fill();
+       }
+    }
+    for(let j = shards.length - 1; j >= 0; j--) {
+       let s = shards[j]; s.x += s.vx; s.y += s.vy; s.vy += 0.04 * fireworkConfig.gravity; s.alpha -= 0.012;
+       if(s.alpha <= 0) { shards.splice(j, 1); } 
+       else {
+          ctx.fillStyle = fireworkConfig.color; ctx.globalAlpha = s.alpha;
+          ctx.beginPath(); ctx.arc(s.x, s.y, s.size, 0, Math.PI*2); ctx.fill(); ctx.globalAlpha = 1.0;
+       }
+    }
+    requestAnimationFrame(step);
+  }
+  window.addEventListener('resize',resize); resize(); step();
+})();
+
+window.addEventListener('DOMContentLoaded', () => {
+   scanServerMediaFolder();
+
+   /* Carga JSON — primero el unificado en /assets/css/, luego fallback legacy */
+   function applyImportedData(d) {
+      if(d.effects)       state.effects       = Object.assign({}, state.effects, d.effects);
+      if(d.designSystem)  state.designSystem  = Object.assign({}, state.designSystem, d.designSystem);
+      showEffect(activeEffect); applyDesignTokens(); renderLogoOnViewport();
+   }
+
+   fetch('/assets/css/labHero_unified.json', { cache: 'no-store' })
+     .then(r => { if(r.ok) return r.json(); throw new Error('no-unified'); })
+     .then(applyImportedData)
+     .catch(() =>
+       fetch('labHero_efects.json')
+         .then(r => { if(r.ok) return r.json(); throw new Error('no-legacy'); })
+         .then(applyImportedData)
+         .catch(() => {
+            console.log('Ajustes base inicializados.');
+            applyDesignTokens(); showEffect(activeEffect); renderControls();
+         })
+     );
+
+   /* Carga CSS — primero el unificado, luego fallback a labHero_styles */
+   fetch('/assets/css/labHero_unified.css', { cache: 'no-store' })
+     .then(r => { if(r.ok) return r.text(); throw new Error('no-unified-css'); })
+     .then(cssText => { if(cssText) parseAndApplyCSSText(cssText); })
+     .catch(() =>
+       fetch('/assets/css/labHero_styles.css')
+         .then(r => r.ok ? r.text() : null)
+         .then(cssText => { if(cssText) parseAndApplyCSSText(cssText); })
+         .catch(() => {})
+     );
+
+   stepImageEffectsLoop();
+});
+</script>
+
+
+<script id="labhero-v5-functional-patch">
+(() => {
+  'use strict';
+
+  const VIDEO_EXTENSIONS = ['.mp4', '.webm', '.mov', '.m4v', '.ogv'];
+  const IMAGE_EXTENSIONS = ['.png', '.jpg', '.jpeg', '.webp', '.gif', '.svg'];
+  const DEFAULT_MEDIA_BASE = '/media/';
+  let mediaInventory = { videos: [], images: [], css: [] };
+  let imageCarouselTimer = null;
+  let imageCarouselIndex = 0;
+  let v5RenderLock = false;
+
+  function ensureV5State() {
+    state.effects.video = Object.assign({
+      speed: 1,
+      loop: true,
+      blur: 0,
+      warmth: 0,
+      brightness: 100,
+      contrast: 105,
+      maskOpacity: 0.35,
+      baseFolder: DEFAULT_MEDIA_BASE,
+      selectedVideo: ''
+    }, state.effects.video || {});
+
+    if (!state.effects.video.baseFolder || state.effects.video.baseFolder === 'media/') {
+      state.effects.video.baseFolder = DEFAULT_MEDIA_BASE;
+    }
+
+    state.effects.imageEffects = Object.assign({
+      speed: 1,
+      scale: 1.5,
+      activeFilter: 'blur',
+      imageB64: '',
+      logoB64Images: '',
+      logoUrl: '',
+      carouselEnabled: false,
+      carouselDelay: 5,
+      carouselSelectedImage: '',
+      carouselBaseFolder: DEFAULT_MEDIA_BASE,
+      carouselTransition: 'fade'
+    }, state.effects.imageEffects || {});
+
+    state.designSystem = state.designSystem || {};
+    state.designSystem.logoUrl = state.designSystem.logoUrl || '';
+    state.designSystem.logoB64 = state.designSystem.logoB64 || '';
+  }
+
+  function extOf(name) {
+    const lower = (name || '').toLowerCase();
+    const pos = lower.lastIndexOf('.');
+    return pos >= 0 ? lower.slice(pos) : '';
+  }
+
+  function filenameWithoutExt(name) {
+    const base = decodeURIComponent((name || '').split('/').pop().split('?')[0].split('#')[0]);
+    const dot = base.lastIndexOf('.');
+    return dot > 0 ? base.slice(0, dot) : base;
+  }
+
+  function uniqueSorted(items) {
+    return Array.from(new Set(items.filter(Boolean))).sort((a, b) => a.localeCompare(b, 'es', { numeric: true }));
+  }
+
+  async function fetchJson(url) {
+    const response = await fetch(url, { cache: 'no-store' });
+    if (!response.ok) throw new Error(`${url} -> HTTP ${response.status}`);
+    return response.json();
+  }
+
+  async function parseAutoindex(url) {
+    const response = await fetch(url, { cache: 'no-store' });
+    if (!response.ok) throw new Error(`${url} -> HTTP ${response.status}`);
+    const html = await response.text();
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    return Array.from(doc.querySelectorAll('a'))
+      .map(a => decodeURIComponent((a.getAttribute('href') || '').split('?')[0].split('#')[0]))
+      .map(href => href.split('/').pop())
+      .filter(Boolean);
+  }
+
+  async function scanMediaInventory() {
+    ensureV5State();
+    try {
+      const data = await fetchJson('/api/list-media');
+      mediaInventory = {
+        videos: uniqueSorted((data.videos || []).map(x => typeof x === 'string' ? x : x.name)),
+        images: uniqueSorted((data.images || []).map(x => typeof x === 'string' ? x : x.name)),
+        css: uniqueSorted((data.css || []).map(x => typeof x === 'string' ? x : x.name))
+      };
+    } catch (apiError) {
+      const candidates = ['/media/', 'media/', '/7media/', '7media/'];
+      let names = [];
+      for (const candidate of candidates) {
+        try {
+          names = await parseAutoindex(candidate);
+          if (names.length) {
+            if (candidate.includes('7media')) state.effects.video.baseFolder = candidate.startsWith('/') ? '/7media/' : '7media/';
+            else state.effects.video.baseFolder = candidate.startsWith('/') ? '/media/' : 'media/';
+            break;
+          }
+        } catch (_) {}
+      }
+      mediaInventory = {
+        videos: uniqueSorted(names.filter(name => VIDEO_EXTENSIONS.includes(extOf(name)))),
+        images: uniqueSorted(names.filter(name => IMAGE_EXTENSIONS.includes(extOf(name)))),
+        css: uniqueSorted(names.filter(name => extOf(name) === '.css'))
+      };
+    }
+
+    discoveredLocalVideos = mediaInventory.videos.slice();
+    const selected = state.effects.video.selectedVideo;
+    if (selected && discoveredLocalVideos.includes(selected)) {
+      currentLocalVideoIdx = discoveredLocalVideos.indexOf(selected);
+      currentVideoMode = 'local';
+    } else if (discoveredLocalVideos.length) {
+      currentLocalVideoIdx = Math.max(0, Math.min(currentLocalVideoIdx, discoveredLocalVideos.length - 1));
+      state.effects.video.selectedVideo = discoveredLocalVideos[currentLocalVideoIdx] || '';
+    } else {
+      currentLocalVideoIdx = 0;
+      state.effects.video.selectedVideo = '';
+    }
+
+    updateVideoStatusLabelV5();
+    refreshExistingCssSelector();
+    refreshVideoSelector();
+    refreshCarouselUi();
+    return mediaInventory;
+  }
+
+  scanServerMediaFolder = async function scanServerMediaFolderV5() {
+    return scanMediaInventory().then(inv => inv.videos);
+  };
+
+  function mediaUrl(filename, base = DEFAULT_MEDIA_BASE) {
+    const safeBase = base || DEFAULT_MEDIA_BASE;
+    return safeBase.replace(/\/?$/, '/') + encodeURIComponent(filename).replace(/%2F/g, '/');
+  }
+
+  function updateVideoStatusLabelV5(message) {
+    const indicator = document.getElementById('video-status-indicator');
+    if (!indicator) return;
+    if (message) {
+      indicator.textContent = message;
+      return;
+    }
+    if (!discoveredLocalVideos.length) {
+      indicator.textContent = 'No hay vídeos locales detectados en /media. Copia .mp4/.webm/.mov/.m4v/.ogv y pulsa Re-escanear.';
+      return;
+    }
+    const selected = state.effects.video.selectedVideo || discoveredLocalVideos[currentLocalVideoIdx] || '';
+    indicator.textContent = `Vídeo local seleccionado: ${selected || 'ninguno'} (${discoveredLocalVideos.length} disponibles)`;
+  }
+
+  runSmartVideoFallback = function runSmartVideoFallbackV5() {
+    ensureV5State();
+    const wrapper = document.getElementById('video-target-wrapper');
+    if (!wrapper) return;
+    wrapper.innerHTML = '';
+
+    let statusIndicator = document.getElementById('video-status-indicator');
+    if (!statusIndicator) {
+      statusIndicator = document.createElement('div');
+      statusIndicator.id = 'video-status-indicator';
+      statusIndicator.style = 'position:absolute; bottom:15px; left:15px; max-width:calc(100% - 30px); background:rgba(10,14,11,0.9); color:#fff; padding:6px 12px; border-radius:6px; font-size:11px; font-family:monospace; z-index:10; border:1px solid var(--color-brand-primary); pointer-events:none;';
+      wrapper.parentElement.appendChild(statusIndicator);
+    }
+
+    if (!discoveredLocalVideos.length) {
+      statusIndicator.textContent = 'Sin vídeos locales detectados. Revisa /media/ o /7media/ y pulsa Re-escanear.';
+      wrapper.innerHTML = '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#07160c,#0A0E0B);color:#fff;font-weight:800;text-align:center;padding:30px;">Sin vídeos locales detectados en /media</div>';
+      applyVisuals('video');
+      return;
+    }
+
+    const selected = state.effects.video.selectedVideo && discoveredLocalVideos.includes(state.effects.video.selectedVideo)
+      ? state.effects.video.selectedVideo
+      : discoveredLocalVideos[currentLocalVideoIdx] || discoveredLocalVideos[0];
+
+    state.effects.video.selectedVideo = selected;
+    currentLocalVideoIdx = discoveredLocalVideos.indexOf(selected);
+    currentVideoMode = 'local';
+
+    const localPath = mediaUrl(selected, state.effects.video.baseFolder || DEFAULT_MEDIA_BASE);
+    statusIndicator.textContent = `Canal Activo: /media -> ${selected}`;
+    statusIndicator.style.borderColor = 'var(--color-brand-primary)';
+
+    const videoEl = document.createElement('video');
+    videoEl.id = 'videoRealNativo';
+    videoEl.src = localPath;
+    videoEl.autoplay = true;
+    videoEl.muted = true;
+    videoEl.loop = !!state.effects.video.loop;
+    videoEl.playsInline = true;
+    videoEl.preload = 'auto';
+    videoEl.controls = false;
+    videoEl.addEventListener('error', () => {
+      statusIndicator.textContent = `Error leyendo ${localPath}. Comprueba que existe y que Nginx lo sirve.`;
+      statusIndicator.style.borderColor = '#ef4444';
+    });
+    videoEl.addEventListener('loadeddata', () => {
+      statusIndicator.textContent = `Vídeo cargado: ${selected}`;
+      videoEl.play().catch(() => {
+        statusIndicator.textContent = `Vídeo listo: ${selected}. El navegador bloqueó autoplay; interactúa con la página.`;
+      });
+    });
+    wrapper.appendChild(videoEl);
+    applyVisuals('video');
+  };
+
+  handleNextVideoAction = function handleNextVideoActionV5() {
+    if (!discoveredLocalVideos.length) {
+      runSmartVideoFallback();
+      return;
+    }
+    currentLocalVideoIdx = (currentLocalVideoIdx + 1) % discoveredLocalVideos.length;
+    state.effects.video.selectedVideo = discoveredLocalVideos[currentLocalVideoIdx];
+    currentVideoMode = 'local';
+    runSmartVideoFallback();
+    refreshVideoSelector();
+  };
+
+  function selectVideoByFilename(filename) {
+    ensureV5State();
+    if (!filename || !discoveredLocalVideos.includes(filename)) return;
+    state.effects.video.selectedVideo = filename;
+    currentLocalVideoIdx = discoveredLocalVideos.indexOf(filename);
+    currentVideoMode = 'local';
+    runSmartVideoFallback();
+    refreshVideoSelector();
+  }
+
+  function refreshVideoSelector() {
+    const select = document.getElementById('video-file-selector-v5');
+    if (!select) return;
+    const selected = state.effects.video.selectedVideo || '';
+    select.innerHTML = '';
+    if (!discoveredLocalVideos.length) {
+      const opt = document.createElement('option');
+      opt.value = '';
+      opt.textContent = 'No hay vídeos locales en /media';
+      select.appendChild(opt);
+      select.disabled = true;
+      return;
+    }
+    select.disabled = false;
+    discoveredLocalVideos.forEach(name => {
+      const opt = document.createElement('option');
+      opt.value = name;
+      opt.textContent = name;
+      if (name === selected) opt.selected = true;
+      select.appendChild(opt);
+    });
+  }
+
+  function removeNextVideoButtons(container) {
+    Array.from(container.querySelectorAll('button')).forEach(button => {
+      if ((button.textContent || '').toLowerCase().includes('siguiente')) {
+        const field = button.closest('.field') || button.parentElement;
+        if (field) field.remove();
+      }
+    });
+  }
+
+  function makeField(labelText) {
+    const field = document.createElement('div');
+    field.className = 'field';
+    const label = document.createElement('label');
+    label.textContent = labelText;
+    field.appendChild(label);
+    return field;
+  }
+
+  function enhanceVideoControls(container) {
+    removeNextVideoButtons(container);
+
+    const status = document.createElement('div');
+    status.className = 'io-box';
+    status.style.borderStyle = 'solid';
+    status.innerHTML = '<strong>Motor de vídeo manual</strong><br><span class="small">Selecciona un fichero real de /media. El vídeo se recarga inmediatamente al cambiar la selección.</span>';
+    container.insertBefore(status, container.firstChild ? container.firstChild.nextSibling : null);
+
+    const field = makeField('Vídeo local disponible en /media');
+    const select = document.createElement('select');
+    select.id = 'video-file-selector-v5';
+    select.addEventListener('change', e => selectVideoByFilename(e.target.value));
+    field.appendChild(select);
+    container.appendChild(field);
+
+    const rescanField = document.createElement('div');
+    rescanField.className = 'field';
+    const rescan = document.createElement('button');
+    rescan.type = 'button';
+    rescan.className = 'control-button';
+    rescan.textContent = 'Re-escanear /media';
+    rescan.addEventListener('click', async () => {
+      await scanServerMediaFolder();
+      if (discoveredLocalVideos.length && !state.effects.video.selectedVideo) {
+        state.effects.video.selectedVideo = discoveredLocalVideos[0];
+      }
+      runSmartVideoFallback();
+      refreshVideoSelector();
+    });
+    rescanField.appendChild(rescan);
+    container.appendChild(rescanField);
+    refreshVideoSelector();
+  }
+
+  async function uploadFile(endpoint, fieldName, file) {
+    const form = new FormData();
+    form.append(fieldName, file);
+    const response = await fetch(endpoint, { method: 'POST', body: form });
+    const payload = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(payload.error || `Error HTTP ${response.status}`);
+    return payload;
+  }
+
+  processLogoUpload = function processLogoUploadV5(event) {
+    const file = event.target.files && event.target.files[0];
+    if (!file) return;
+    const localPreview = URL.createObjectURL(file);
+    state.designSystem.logoB64 = localPreview;
+    state.designSystem.logoUrl = '';
+    renderLogoOnViewport();
+
+    uploadFile('/api/upload-logo', 'logo', file)
+      .then(manifest => {
+        state.designSystem.logoUrl = `${manifest.url}?v=${manifest.updated_at || Date.now()}`;
+        state.designSystem.logoB64 = '';
+        renderLogoOnViewport();
+      })
+      .catch(err => {
+        console.error(err);
+        alert(`No se pudo guardar el logo en /media: ${err.message}`);
+      });
+  };
+
+  processLogoUploadImages = function processLogoUploadImagesV5(event) {
+    const file = event.target.files && event.target.files[0];
+    if (!file) return;
+    const localPreview = URL.createObjectURL(file);
+    state.effects.imageEffects.logoB64Images = localPreview;
+    state.effects.imageEffects.logoUrl = '';
+    renderImageLogoOverlay();
+
+    uploadFile('/api/upload-image-logo', 'logo', file)
+      .then(manifest => {
+        state.effects.imageEffects.logoUrl = `${manifest.url}?v=${manifest.updated_at || Date.now()}`;
+        state.effects.imageEffects.logoB64Images = '';
+        renderImageLogoOverlay();
+      })
+      .catch(err => {
+        console.error(err);
+        alert(`No se pudo guardar el logo de imágenes en /media: ${err.message}`);
+      });
+  };
+
+  renderLogoOnViewport = function renderLogoOnViewportV5() {
+    ensureV5State();
+    const holder = document.getElementById('logo-viewport-render');
+    if (!holder) return;
+    holder.style.display = 'flex';
+    const src = state.designSystem.logoUrl || state.designSystem.logoB64;
+    if (src) {
+      holder.innerHTML = '';
+      const img = document.createElement('img');
+      img.src = src;
+      img.alt = 'Logotipo corporativo';
+      img.style.maxWidth = '100%';
+      img.style.maxHeight = '100%';
+      img.style.objectFit = 'contain';
+      holder.appendChild(img);
+    } else if (!holder.querySelector('svg,img')) {
+      holder.innerHTML = '<svg class="default-logo-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>';
+    }
+  };
+
+  function renderImageLogoOverlay() {
+    ensureV5State();
+    const viewport = document.getElementById('imageEffectsView');
+    if (!viewport) return;
+    let logo = document.getElementById('image-effects-logo-overlay-v5');
+    if (!logo) {
+      logo = document.createElement('img');
+      logo.id = 'image-effects-logo-overlay-v5';
+      logo.alt = 'Logo de medios';
+      viewport.appendChild(logo);
+    }
+    const src = state.effects.imageEffects.logoUrl || state.effects.imageEffects.logoB64Images;
+    if (src) {
+      logo.src = src;
+      logo.style.display = 'block';
+    } else {
+      logo.removeAttribute('src');
+      logo.style.display = 'none';
+    }
+  }
+
+  async function loadPersistedLogos() {
+    ensureV5State();
+    try {
+      const manifest = await fetchJson('/media/logo.json');
+      if (manifest.url) {
+        state.designSystem.logoUrl = `${manifest.url}?v=${manifest.updated_at || Date.now()}`;
+        state.designSystem.logoB64 = '';
+        renderLogoOnViewport();
+      }
+    } catch (_) {}
+    try {
+      const manifest = await fetchJson('/media/image-logo.json');
+      if (manifest.url) {
+        state.effects.imageEffects.logoUrl = `${manifest.url}?v=${manifest.updated_at || Date.now()}`;
+        state.effects.imageEffects.logoB64Images = '';
+        renderImageLogoOverlay();
+      }
+    } catch (_) {}
+  }
+
+  function ensureCarouselOverlay() {
+    const viewport = document.getElementById('imageEffectsView');
+    if (!viewport) return null;
+    let overlay = document.getElementById('image-carousel-controls-v5');
+    if (!overlay) {
+      overlay = document.createElement('div');
+      overlay.id = 'image-carousel-controls-v5';
+      overlay.innerHTML = `
+        <button type="button" class="carousel-arrow carousel-left" aria-label="Imagen anterior">‹</button>
+        <button type="button" class="carousel-arrow carousel-right" aria-label="Imagen siguiente">›</button>
+        <div class="carousel-caption" id="image-carousel-caption-v5"></div>
+      `;
+      viewport.appendChild(overlay);
+      overlay.querySelector('.carousel-left').addEventListener('click', () => moveCarousel(-1, true));
+      overlay.querySelector('.carousel-right').addEventListener('click', () => moveCarousel(1, true));
+    }
+    return overlay;
+  }
+
+  /* Solo transiciones 2D — sin efectos 3D */
+  const CAROUSEL_TRANSITIONS = {
+    fade:       { dur: 650,  enterKf: 'cEnterFade',    leaveKf: 'cLeaveFade',   canvas: false },
+    slideLeft:  { dur: 520,  enterKf: 'cEnterSlideL',  leaveKf: 'cLeaveSlideL', canvas: false },
+    slideRight: { dur: 520,  enterKf: 'cEnterSlideR',  leaveKf: 'cLeaveSlideR', canvas: false },
+    slideUp:    { dur: 520,  enterKf: 'cEnterSlideU',  leaveKf: 'cLeaveSlideU', canvas: false },
+    zoomFade:   { dur: 700,  enterKf: 'cEnterZoom',    leaveKf: 'cLeaveZoom',   canvas: false },
+    blurFade:   { dur: 680,  enterKf: 'cEnterBlur',    leaveKf: 'cLeaveBlur',   canvas: false },
+    rotateFade: { dur: 720,  enterKf: 'cEnterRotate',  leaveKf: 'cLeaveRotate', canvas: false },
+    wipe:       { dur: 580,  enterKf: 'cEnterWipe',    leaveKf: 'cLeaveWipe',   canvas: false },
+    kenBurns:   { dur: 1100, enterKf: 'cEnterKB',      leaveKf: 'cLeaveKB',     canvas: false },
+    diffusion:  { dur: 1400, canvas: true }
+  };
+
+  let carouselTransitionActive = false;
+
+  /* easing para diffusion */
+  function easeInOutCubic(t){ return t<.5 ? 4*t*t*t : (t-1)*(2*t-2)*(2*t-2)+1; }
+
+  /* Transición de difusión por canvas — los puntos de una imagen se dispersan
+     y se recomponen formando la siguiente, todo dentro del área de la imagen */
+  function applyDiffusionTransition(img, nextSrc, duration, onComplete) {
+    const viewport = document.getElementById('imageEffectsView');
+    if (!viewport) { img.src = nextSrc; onComplete && onComplete(); return; }
+
+    const imgRect = img.getBoundingClientRect();
+    const vpRect  = viewport.getBoundingClientRect();
+    const W = Math.max(imgRect.width,  1);
+    const H = Math.max(imgRect.height, 1);
+    const relL = imgRect.left - vpRect.left;
+    const relT = imgRect.top  - vpRect.top;
+
+    /* Canvas exactamente sobre la imagen */
+    const cvs = document.createElement('canvas');
+    cvs.width  = Math.round(W);
+    cvs.height = Math.round(H);
+    cvs.style.cssText = `position:absolute;left:${relL}px;top:${relT}px;` +
+      `width:${W}px;height:${H}px;border-radius:16px;z-index:10;pointer-events:none;`;
+    viewport.appendChild(cvs);
+    const ctx = cvs.getContext('2d');
+
+    const N = 700;
+    const dots = [];
+
+    /* Samplea píxeles del elemento img (si hay CORS, usa color de marca) */
+    function sampleImg(el, fillDots, propX, propY, propR, propG, propB) {
+      try {
+        const tmp = document.createElement('canvas');
+        tmp.width = cvs.width; tmp.height = cvs.height;
+        const tc = tmp.getContext('2d');
+        tc.drawImage(el, 0, 0, cvs.width, cvs.height);
+        fillDots.forEach(d => {
+          const px = d[propX] !== undefined ? Math.floor(d[propX]) : Math.floor(Math.random() * cvs.width);
+          const py = d[propY] !== undefined ? Math.floor(d[propY]) : Math.floor(Math.random() * cvs.height);
+          const pix = tc.getImageData(px, py, 1, 1).data;
+          d[propR] = pix[0]; d[propG] = pix[1]; d[propB] = pix[2];
+        });
+      } catch(_) {
+        fillDots.forEach(d => { d[propR]=47; d[propG]=229; d[propB]=107; });
+      }
+    }
+
+    /* Crea puntos con posición y color de la imagen actual */
+    for(let i = 0; i < N; i++) {
+      dots.push({ ox: Math.random()*cvs.width, oy: Math.random()*cvs.height,
+                  dx: Math.random()*cvs.width, dy: Math.random()*cvs.height,
+                  mx: Math.random()*cvs.width, my: Math.random()*cvs.height,
+                  sz: Math.random()*3+1.5 });
+    }
+    sampleImg(img, dots, 'ox','oy','sr','sg','sb');
+    dots.forEach(d=>{ d.tx=Math.random()*cvs.width; d.ty=Math.random()*cvs.height; });
+
+    img.style.visibility = 'hidden';
+    const totalMs = duration;
+    const t0 = performance.now();
+
+    /* Carga la siguiente imagen y samplea sus colores */
+    const nextEl = new Image(); nextEl.crossOrigin='anonymous';
+    nextEl.onload = () => {
+      sampleImg(nextEl, dots, 'dx','dy','dr','dg','db');
+      function frame(now) {
+        const elapsed = now - t0;
+        const p = Math.min(elapsed / totalMs, 1);
+        ctx.clearRect(0, 0, cvs.width, cvs.height);
+
+        if(p < 0.45) {
+          /* Fase 1: dispersión desde posición original */
+          const t = easeInOutCubic(p / 0.45);
+          dots.forEach(d => {
+            const cx = d.ox + (d.tx - d.ox) * t;
+            const cy = d.oy + (d.ty - d.oy) * t;
+            const a = 1 - t * 0.25;
+            ctx.globalAlpha = a;
+            ctx.fillStyle = `rgb(${d.sr},${d.sg},${d.sb})`;
+            ctx.beginPath(); ctx.arc(cx, cy, d.sz*(1+t*.4), 0, Math.PI*2); ctx.fill();
+          });
+        } else if(p < 0.55) {
+          /* Fase 2: pausa dispersa con blend de color */
+          const t = (p - 0.45) / 0.10;
+          dots.forEach(d => {
+            const ir = Math.round(d.sr + (d.dr-d.sr)*t);
+            const ig = Math.round(d.sg + (d.dg-d.sg)*t);
+            const ib = Math.round(d.sb + (d.db-d.sb)*t);
+            ctx.globalAlpha = 0.75;
+            ctx.fillStyle = `rgb(${ir},${ig},${ib})`;
+            ctx.beginPath(); ctx.arc(d.tx, d.ty, d.sz*1.4, 0, Math.PI*2); ctx.fill();
+          });
+        } else {
+          /* Fase 3: convergencia hacia posición de nueva imagen */
+          const t = easeInOutCubic((p - 0.55) / 0.45);
+          dots.forEach(d => {
+            const cx = d.tx + (d.dx - d.tx) * t;
+            const cy = d.ty + (d.dy - d.ty) * t;
+            ctx.globalAlpha = 0.75 + t * 0.25;
+            ctx.fillStyle = `rgb(${d.dr},${d.dg},${d.db})`;
+            ctx.beginPath(); ctx.arc(cx, cy, d.sz*(1.4-t*.4), 0, Math.PI*2); ctx.fill();
+          });
+        }
+        ctx.globalAlpha = 1;
+
+        if(p < 1) { requestAnimationFrame(frame); }
+        else {
+          img.src = nextSrc;
+          img.style.visibility = '';
+          cvs.remove();
+          onComplete && onComplete();
+        }
+      }
+      requestAnimationFrame(frame);
+    };
+    nextEl.onerror = () => { img.src=nextSrc; img.style.visibility=''; cvs.remove(); onComplete&&onComplete(); };
+    nextEl.src = nextSrc;
+  }
+
+  function applyCarouselTransitionEffect(img, nextSrc, transition) {
+    if (carouselTransitionActive || !img) { if(img) img.src = nextSrc; return; }
+    const viewport = document.getElementById('imageEffectsView');
+    if (!viewport) { img.src = nextSrc; return; }
+
+    const conf = CAROUSEL_TRANSITIONS[transition] || CAROUSEL_TRANSITIONS.fade;
+    carouselTransitionActive = true;
+
+    /* Transición canvas (diffusion) */
+    if(conf.canvas) {
+      applyDiffusionTransition(img, nextSrc, conf.dur, () => { carouselTransitionActive = false; });
+      return;
+    }
+
+    /* Transiciones CSS 2D — posicionadas exactamente sobre el img actual */
+    const imgRect = img.getBoundingClientRect();
+    const vpRect  = viewport.getBoundingClientRect();
+    const W = imgRect.width;
+    const H = imgRect.height;
+    const relL = imgRect.left - vpRect.left;
+    const relT = imgRect.top  - vpRect.top;
+
+    const nextImg = document.createElement('img');
+    nextImg.className = 'lab-target-image';
+    nextImg.alt = img.alt || '';
+    /* Posición y tamaño idénticos al img actual */
+    nextImg.style.cssText = `
+      position:absolute; left:${relL}px; top:${relT}px;
+      width:${W}px; height:${H}px; max-width:none; max-height:none;
+      border-radius:16px; object-fit:cover;
+      box-shadow:0 20px 40px rgba(0,0,0,.4); z-index:6; pointer-events:none;
+      animation:${conf.enterKf} ${conf.dur}ms cubic-bezier(.4,0,.2,1) forwards;
+    `;
+    nextImg.src = nextSrc;
+    viewport.appendChild(nextImg);
+
+    img.style.position = 'absolute';
+    img.style.left     = relL + 'px';
+    img.style.top      = relT + 'px';
+    img.style.width    = W + 'px';
+    img.style.height   = H + 'px';
+    img.style.maxWidth = 'none';
+    img.style.maxHeight= 'none';
+    img.style.zIndex   = '4';
+    img.style.animation = `${conf.leaveKf} ${conf.dur}ms cubic-bezier(.4,0,.2,1) forwards`;
+
+    setTimeout(() => {
+      img.src = nextSrc;
+      img.removeAttribute('style');
+      nextImg.remove();
+      carouselTransitionActive = false;
+    }, conf.dur + 30);
+  }
+
+  function setCarouselImage(index) {
+    ensureV5State();
+    const images = mediaInventory.images || [];
+    const img = document.getElementById('lab-canvas-image-render');
+    const caption = document.getElementById('image-carousel-caption-v5');
+    if (!img || !images.length) return;
+    imageCarouselIndex = ((index % images.length) + images.length) % images.length;
+    const filename = images[imageCarouselIndex];
+    state.effects.imageEffects.carouselSelectedImage = filename;
+    const nextSrc = mediaUrl(filename, DEFAULT_MEDIA_BASE);
+    const transition = state.effects.imageEffects.carouselTransition || 'fade';
+    applyCarouselTransitionEffect(img, nextSrc, transition);
+    if (caption) caption.textContent = filenameWithoutExt(filename);
+  }
+
+  function moveCarousel(delta, manual = false) {
+    const images = mediaInventory.images || [];
+    if (!images.length) return;
+    setCarouselImage(imageCarouselIndex + delta);
+    if (manual) restartCarouselTimer();
+  }
+
+  function restartCarouselTimer() {
+    clearInterval(imageCarouselTimer);
+    imageCarouselTimer = null;
+    ensureV5State();
+    if (!state.effects.imageEffects.carouselEnabled) return;
+    const delayMs = Math.max(1, Number(state.effects.imageEffects.carouselDelay || 5)) * 1000;
+    imageCarouselTimer = setInterval(() => moveCarousel(1), delayMs);
+  }
+
+  function refreshCarouselUi() {
+    ensureV5State();
+    const overlay = ensureCarouselOverlay();
+    if (!overlay) return;
+    const enabled = !!state.effects.imageEffects.carouselEnabled;
+    overlay.style.display = enabled ? 'block' : 'none';
+    if (enabled) {
+      if (!mediaInventory.images.length) {
+        scanMediaInventory().then(() => {
+          if (mediaInventory.images.length) setCarouselImage(Math.max(0, mediaInventory.images.indexOf(state.effects.imageEffects.carouselSelectedImage)));
+        });
+      } else {
+        const wanted = state.effects.imageEffects.carouselSelectedImage;
+        const idx = wanted ? mediaInventory.images.indexOf(wanted) : imageCarouselIndex;
+        setCarouselImage(idx >= 0 ? idx : 0);
+      }
+    }
+    restartCarouselTimer();
+    renderImageLogoOverlay();
+  }
+
+  function enhanceImageControls(container) {
+    ensureCarouselOverlay();
+    renderImageLogoOverlay();
+
+    const box = document.createElement('div');
+    box.className = 'io-box';
+    box.style.borderStyle = 'solid';
+    const label = document.createElement('label');
+    label.className = 'field-checkbox';
+    const chk = document.createElement('input');
+    chk.type = 'checkbox';
+    chk.checked = !!state.effects.imageEffects.carouselEnabled;
+    chk.addEventListener('change', e => {
+      state.effects.imageEffects.carouselEnabled = e.target.checked;
+      refreshCarouselUi();
+      renderControls();
+    });
+    label.appendChild(chk);
+    label.appendChild(document.createTextNode('Convertir imagen en carrusel desde /media'));
+    box.appendChild(label);
+
+    const small = document.createElement('div');
+    small.className = 'small';
+    small.textContent = `${mediaInventory.images.length || 0} imágenes detectadas en /media`;
+    box.appendChild(small);
+    container.appendChild(box);
+
+    if (state.effects.imageEffects.carouselEnabled) {
+      const delayField = makeField('Tiempo visible por imagen');
+      const row = document.createElement('div');
+      row.className = 'row';
+      const range = document.createElement('input');
+      range.type = 'range';
+      range.min = '1';
+      range.max = '30';
+      range.step = '1';
+      range.value = state.effects.imageEffects.carouselDelay || 5;
+      const val = document.createElement('span');
+      val.className = 'small';
+      val.textContent = `${range.value}s`;
+      range.addEventListener('input', e => {
+        state.effects.imageEffects.carouselDelay = Number(e.target.value);
+        val.textContent = `${e.target.value}s`;
+        restartCarouselTimer();
+      });
+      row.appendChild(range);
+      row.appendChild(val);
+      delayField.appendChild(row);
+      container.appendChild(delayField);
+
+      /* Selector de efecto de transición (2D + diffusion canvas) */
+      createSelectField(container, 'Efecto de transición entre imágenes', [
+        { value: 'fade',       label: 'Fade — Desvanecido suave' },
+        { value: 'slideLeft',  label: 'Deslizar ← izquierda' },
+        { value: 'slideRight', label: 'Deslizar → derecha' },
+        { value: 'slideUp',    label: 'Deslizar ↑ arriba' },
+        { value: 'zoomFade',   label: 'Zoom Fade — Acercamiento + fade' },
+        { value: 'blurFade',   label: 'Blur Fade — Desenfoque cinematográfico' },
+        { value: 'rotateFade', label: 'Rotate Fade — Giro 2D elegante' },
+        { value: 'wipe',       label: 'Wipe — Barrido lateral' },
+        { value: 'kenBurns',   label: 'Ken Burns — Pan + zoom documental' },
+        { value: 'diffusion',  label: '✦ Difusión — Puntos que fluyen entre imágenes' }
+      ], state.effects.imageEffects.carouselTransition || 'fade', val => {
+        state.effects.imageEffects.carouselTransition = val;
+      });
+
+      const rescanField = document.createElement('div');
+      rescanField.className = 'field';
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'control-button';
+      btn.textContent = 'Re-escanear imágenes /media';
+      btn.addEventListener('click', async () => {
+        await scanMediaInventory();
+        refreshCarouselUi();
+        renderControls();
+      });
+      rescanField.appendChild(btn);
+      container.appendChild(rescanField);
+    }
+    refreshCarouselUi();
+  }
+
+  async function refreshExistingCssSelector() {
+    const select = document.getElementById('existing-css-selector-v5');
+    if (!select) return;
+    select.innerHTML = '';
+    const files = mediaInventory.css || [];
+    if (!files.length) {
+      const opt = document.createElement('option');
+      opt.value = '';
+      opt.textContent = 'No hay CSS detectados';
+      select.appendChild(opt);
+      select.disabled = true;
+      return;
+    }
+    select.disabled = false;
+    files.forEach(name => {
+      const opt = document.createElement('option');
+      opt.value = mediaUrl(name, DEFAULT_MEDIA_BASE);
+      opt.textContent = name;
+      select.appendChild(opt);
+    });
+  }
+
+  function enhanceStyleControls(container) {
+    const box = document.createElement('div');
+    box.className = 'io-box';
+    const label = document.createElement('label');
+    label.className = 'file-label';
+    label.textContent = 'Aplicar CSS existente desde /media';
+    const select = document.createElement('select');
+    select.id = 'existing-css-selector-v5';
+    const actions = document.createElement('div');
+    actions.style.display = 'grid';
+    actions.style.gridTemplateColumns = '1fr 1fr';
+    actions.style.gap = '8px';
+    actions.style.marginTop = '8px';
+    const apply = document.createElement('button');
+    apply.type = 'button';
+    apply.className = 'control-button';
+    apply.textContent = 'Aplicar CSS';
+    apply.addEventListener('click', async () => {
+      if (!select.value) return;
+      const css = await fetch(select.value, { cache: 'no-store' }).then(r => r.text());
+      parseAndApplyCSSText(css);
+      applyDesignTokens();
+    });
+    const rescan = document.createElement('button');
+    rescan.type = 'button';
+    rescan.className = 'control-button';
+    rescan.textContent = 'Re-escanear CSS';
+    rescan.addEventListener('click', scanMediaInventory);
+    actions.appendChild(apply);
+    actions.appendChild(rescan);
+    box.appendChild(label);
+    box.appendChild(select);
+    box.appendChild(actions);
+    container.insertBefore(box, container.firstChild);
+    refreshExistingCssSelector();
+  }
+
+  const originalRenderControlsV5 = renderControls;
+  renderControls = function renderControlsV5() {
+    ensureV5State();
+    originalRenderControlsV5();
+    if (v5RenderLock) return;
+    const container = document.getElementById('dynamic-controls');
+    if (!container) return;
+    v5RenderLock = true;
+    try {
+      if (state.activePane === 'effects' && activeEffect === 'video') enhanceVideoControls(container);
+      if (state.activePane === 'images') enhanceImageControls(container);
+      if (state.activePane === 'styles') enhanceStyleControls(container);
+    } finally {
+      v5RenderLock = false;
+    }
+  };
+
+  const originalShowEffectV5 = showEffect;
+  showEffect = function showEffectV5(name) {
+    ensureV5State();
+    originalShowEffectV5(name);
+    if (name === 'video') {
+      scanServerMediaFolder().then(() => {
+        if (discoveredLocalVideos.length && !state.effects.video.selectedVideo) {
+          state.effects.video.selectedVideo = discoveredLocalVideos[0];
+        }
+        runSmartVideoFallback();
+        renderControls();
+      });
+    }
+    if (name === 'magnifierGlass') {
+      const lens = document.getElementById('lupa-lens-element');
+      if (lens) lens.style.border = '0';
+    }
+  };
+
+  const originalSwitchControlPaneV5 = switchControlPane;
+  switchControlPane = function switchControlPaneV5(pane) {
+    ensureV5State();
+    originalSwitchControlPaneV5(pane);
+    if (pane === 'images') {
+      scanMediaInventory().then(refreshCarouselUi);
+    }
+  };
+
+  const oldExecuteSmartExportV5 = executeSmartExport;
+  executeSmartExport = function executeSmartExportV5() {
+    ensureV5State();
+    if (state.activePane === 'images') {
+      const im = state.effects.imageEffects;
+      const cssImgString = `/* =========================================================================\n` +
+        `   LABHERO IMAGES - EXPORTACIÓN COMPLETA V5\n` +
+        `   ========================================================================= */\n\n` +
+        `:root {\n` +
+        `  --labhero-image-anim-speed: ${im.speed};\n` +
+        `  --labhero-image-filter-intensity: ${im.scale};\n` +
+        `  --labhero-image-active-effect-mode: "${im.activeFilter}";\n` +
+        `  --labhero-image-logo-url: ${im.logoUrl ? `url("${im.logoUrl.split('?')[0]}")` : 'none'};\n` +
+        `  --labhero-carousel-enabled: ${im.carouselEnabled ? 1 : 0};\n` +
+        `  --labhero-carousel-delay: ${im.carouselDelay || 5}s;\n` +
+        `  --labhero-carousel-folder: "${im.carouselBaseFolder || DEFAULT_MEDIA_BASE}";\n` +
+        `  --labhero-carousel-selected-image: "${im.carouselSelectedImage || ''}";\n` +
+        `}\n`;
+      triggerDownload(new Blob([cssImgString], { type: 'text/css' }), 'labHeroImages.css');
+      return;
+    }
+    if (state.activePane === 'styles') {
+      const ds = state.designSystem;
+      const cssString = `/* TOKENS EXPORTADOS CONSOLIDACIÓN V5 */\n\n:root {\n` +
+        `  --font-h1: ${ds.typography.fontH1};\n` +
+        `  --font-body: ${ds.typography.fontBody};\n` +
+        `  --color-brand-primary: ${ds.colors.brandPrimary};\n` +
+        `  --color-bg-viewport: ${ds.colors.bgViewport};\n` +
+        `  --color-bg-card: ${ds.colors.cardColorHex};\n` +
+        `  --card-radius: ${ds.radius}px;\n` +
+        `  --brand-logo-url: ${ds.logoUrl ? `url("${ds.logoUrl.split('?')[0]}")` : 'none'};\n` +
+        `}\n`;
+      triggerDownload(new Blob([cssString], { type: 'text/css' }), 'labHero_styles.css');
+      return;
+    }
+    oldExecuteSmartExportV5();
+  };
+
+  viewport.addEventListener('click', (e) => {
+    if (state.activePane === 'effects' && activeEffect === 'magneticMouse') {
+      const r = viewport.getBoundingClientRect();
+      magneticClickRepulse.x = e.clientX - r.left;
+      magneticClickRepulse.y = e.clientY - r.top;
+      magneticClickRepulse.force = 14.0;
+    }
+  });
+
+  const style = document.createElement('style');
+  style.id = 'labhero-v5-style-patch';
+  style.textContent = `
+    .brand-logo-container { right: 24px !important; left: auto !important; z-index: 240 !important; display:flex !important; background:transparent !important; border:none !important; border-radius:0 !important; padding:0 !important; backdrop-filter:none !important; box-shadow:none !important; }
+    .lupa-lens { border: 0 !important; box-shadow: 0 0 26px rgba(0,0,0,.5), var(--brand-glow-effect) !important; }
+    .control-button { width:100%; padding:10px; background:var(--color-brand-primary); color:#07160c; border:0; border-radius:8px; font-weight:800; cursor:pointer; }
+    #imageEffectsView { pointer-events:auto; }
+    #image-effects-logo-overlay-v5 { position:absolute; top:24px; right:24px; max-width:140px; max-height:90px; object-fit:contain; z-index:8; padding:8px; border-radius:14px; background:rgba(10,14,11,.55); box-shadow:0 10px 30px rgba(0,0,0,.35); }
+    #image-carousel-controls-v5 { position:absolute; inset:0; z-index:7; pointer-events:none; }
+    #image-carousel-controls-v5 .carousel-arrow { pointer-events:auto; position:absolute; top:50%; transform:translateY(-50%); width:44px; height:64px; border:0; border-radius:999px; background:rgba(10,14,11,.66); color:#fff; font-size:42px; line-height:1; cursor:pointer; box-shadow:0 10px 25px rgba(0,0,0,.35); }
+    #image-carousel-controls-v5 .carousel-left { left:28px; }
+    #image-carousel-controls-v5 .carousel-right { right:28px; }
+    #image-carousel-controls-v5 .carousel-caption { position:absolute; left:50%; bottom:28px; transform:translateX(-50%); background:rgba(10,14,11,.72); color:#fff; border:1px solid var(--color-brand-primary); border-radius:999px; padding:8px 18px; font-weight:800; letter-spacing:.02em; pointer-events:none; }
+
+    /* ── Carrusel: keyframes 2D — offset 0px pq img ya se posiciona absolutamente ── */
+    @keyframes cEnterFade    { from{opacity:0}  to{opacity:1} }
+    @keyframes cLeaveFade    { from{opacity:1}  to{opacity:0} }
+
+    @keyframes cEnterSlideL  { from{opacity:0;transform:translateX(100%)}  to{opacity:1;transform:translateX(0)} }
+    @keyframes cLeaveSlideL  { from{opacity:1;transform:translateX(0)}     to{opacity:0;transform:translateX(-100%)} }
+
+    @keyframes cEnterSlideR  { from{opacity:0;transform:translateX(-100%)} to{opacity:1;transform:translateX(0)} }
+    @keyframes cLeaveSlideR  { from{opacity:1;transform:translateX(0)}     to{opacity:0;transform:translateX(100%)} }
+
+    @keyframes cEnterSlideU  { from{opacity:0;transform:translateY(80%)}   to{opacity:1;transform:translateY(0)} }
+    @keyframes cLeaveSlideU  { from{opacity:1;transform:translateY(0)}     to{opacity:0;transform:translateY(-80%)} }
+
+    @keyframes cEnterZoom    { from{opacity:0;transform:scale(.74)}  to{opacity:1;transform:scale(1)} }
+    @keyframes cLeaveZoom    { from{opacity:1;transform:scale(1)}    to{opacity:0;transform:scale(1.26)} }
+
+    @keyframes cEnterBlur    { from{opacity:0;filter:blur(26px) brightness(1.5)} to{opacity:1;filter:blur(0) brightness(1)} }
+    @keyframes cLeaveBlur    { from{opacity:1;filter:blur(0)}                    to{opacity:0;filter:blur(26px) brightness(.5)} }
+
+    @keyframes cEnterRotate  { from{opacity:0;transform:rotate(-8deg) scale(.86)} to{opacity:1;transform:rotate(0deg) scale(1)} }
+    @keyframes cLeaveRotate  { from{opacity:1;transform:rotate(0deg) scale(1)}    to{opacity:0;transform:rotate(8deg) scale(.86)} }
+
+    @keyframes cEnterWipe    { from{clip-path:inset(0 100% 0 0 round 16px)} to{clip-path:inset(0 0% 0 0 round 16px)} }
+    @keyframes cLeaveWipe    { from{clip-path:inset(0 0% 0 0 round 16px)}   to{clip-path:inset(0 0 0 100% round 16px);opacity:0} }
+
+    @keyframes cEnterKB      { from{opacity:0;transform:scale(1.13) translate(2%,1.5%)} to{opacity:1;transform:scale(1) translate(0,0)} }
+    @keyframes cLeaveKB      { from{opacity:1;transform:scale(1)}                       to{opacity:0;transform:scale(.92) translate(-1.5%,-1%)} }
+  `;
+  document.head.appendChild(style);
+
+  window.processLogoUpload = processLogoUpload;
+  window.processLogoUploadImages = processLogoUploadImages;
+  window.scanServerMediaFolder = scanServerMediaFolder;
+  window.runSmartVideoFallback = runSmartVideoFallback;
+  window.handleNextVideoAction = handleNextVideoAction;
+  window.renderLogoOnViewport = renderLogoOnViewport;
+  window.executeSmartExport = executeSmartExport;
+
+  window.addEventListener('DOMContentLoaded', () => {
+    ensureV5State();
+    loadPersistedLogos();
+    scanMediaInventory().then(() => {
+      if (state.activePane === 'images') refreshCarouselUi();
+      if (activeEffect === 'video') runSmartVideoFallback();
+      renderControls();
+    });
+  });
+})();
+</script>
+
+<script>
+/* ==========================================================================
+   LABHERO V6 - INTEGRACIÓN VideoOtimization
+   ========================================================================== */
+(function(){
+  const VIDEO_OPTIMIZATION_API = '/api/optimize';
+
+  function qs(id) { return document.getElementById(id); }
+
+  function setVideoOptimizationStatus(message, type) {
+    const status = qs('video-optimization-status');
+    if (!status) return;
+    status.textContent = message;
+    status.dataset.type = type || 'info';
+  }
+
+  function setupVideoOptimizationUi() {
+    const input = qs('video-optimization-input');
+    const btn = qs('video-optimization-run');
+    const name = qs('video-optimization-file-name');
+    if (!input || !btn || !name || input.dataset.bound === '1') return;
+    input.dataset.bound = '1';
+
+    input.addEventListener('change', () => {
+      const file = input.files && input.files[0];
+      if (!file) {
+        btn.disabled = true;
+        name.textContent = 'Seleccionar vídeo .mp4';
+        setVideoOptimizationStatus('Servicio listo. Selecciona un MP4.', 'info');
+        return;
+      }
+      name.textContent = file.name;
+      if (!file.name.toLowerCase().endsWith('.mp4')) {
+        btn.disabled = true;
+        setVideoOptimizationStatus('Error: el fichero debe tener extensión .mp4.', 'error');
+        return;
+      }
+      btn.disabled = false;
+      setVideoOptimizationStatus('Vídeo seleccionado. Pulsa optimizar.', 'info');
+    });
+
+    btn.addEventListener('click', runVideoOptimization);
+  }
+
+  async function runVideoOptimization() {
+    const input = qs('video-optimization-input');
+    const btn = qs('video-optimization-run');
+    const preview = qs('video-optimization-preview');
+    const file = input && input.files && input.files[0];
+    if (!file) {
+      setVideoOptimizationStatus('Selecciona primero un fichero MP4.', 'error');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    btn.disabled = true;
+    setVideoOptimizationStatus('Optimizando con FFmpeg: máximo 1080p, 30 FPS, H.264, sin audio. No cierres la pestaña.', 'working');
+
+    try {
+      const response = await fetch(VIDEO_OPTIMIZATION_API, { method: 'POST', body: formData });
+      if (!response.ok) {
+        let detail = 'Error en el servidor de optimización.';
+        try {
+          const err = await response.json();
+          detail = err.detail || err.error || detail;
+        } catch (_) {}
+        throw new Error(detail);
+      }
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const original = file.name.replace(/\.mp4$/i, '');
+      const outputName = `${original}.optimized.mp4`;
+
+      if (preview) {
+        preview.src = url;
+        preview.classList.remove('hidden');
+      }
+
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = outputName;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+
+      setVideoOptimizationStatus(`Optimización completada. Descarga generada: ${outputName}`, 'success');
+    } catch (err) {
+      setVideoOptimizationStatus(`Error: ${err.message}`, 'error');
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  function renderVideoOptimizationControls() {
+    const container = qs('dynamic-controls');
+    if (!container) return;
+    container.innerHTML = '';
+
+    const title = document.createElement('div');
+    title.className = 'section-title';
+    title.textContent = 'VideoOtimization';
+    container.appendChild(title);
+
+    const info = document.createElement('div');
+    info.className = 'io-box';
+    info.innerHTML = '<strong>Perfil de salida</strong><br>MP4 H.264, máximo 1080p, 30 FPS, bitrate objetivo 3 Mbps, máximo 4 Mbps, sin audio. El resultado se descarga al navegador.';
+    container.appendChild(info);
+
+    const openBtn = document.createElement('button');
+    openBtn.type = 'button';
+    openBtn.className = 'control-button';
+    openBtn.textContent = 'Seleccionar vídeo desde el panel principal';
+    openBtn.addEventListener('click', () => qs('video-optimization-input')?.click());
+    const field = document.createElement('div');
+    field.className = 'field';
+    field.appendChild(openBtn);
+    container.appendChild(field);
+  }
+
+  const previousSwitchControlPane = window.switchControlPane || switchControlPane;
+  window.switchControlPane = switchControlPane = function switchControlPaneV6(pane) {
+    if (pane !== 'videoOptimization') {
+      previousSwitchControlPane(pane);
+      const btnOpt = qs('btn-pane-video-optimization');
+      if (btnOpt) btnOpt.classList.remove('active');
+      const optView = qs('videoOptimizationView');
+      if (optView) optView.classList.add('hidden');
+      return;
+    }
+
+    state.activePane = 'videoOptimization';
+    ['effects','images','styles'].forEach(name => {
+      const btn = qs(`btn-pane-${name}`);
+      if (btn) btn.classList.remove('active');
+    });
+    const btnOpt = qs('btn-pane-video-optimization');
+    if (btnOpt) btnOpt.classList.add('active');
+
+    qs('panel-title-text').innerText = 'VideoOtimization';
+    qs('panel-desc-text').innerText = 'Optimización de vídeos MP4 para fondos web mediante backend Docker con FFmpeg.';
+    qs('import-zone-effects')?.classList.add('hidden');
+    qs('import-zone-styles')?.classList.add('hidden');
+    qs('effects-nav-bar-container')?.classList.add('hidden');
+    qs('imageEffectsView')?.classList.add('hidden');
+    qs('hero-main-card-wrapper')?.classList.add('hidden');
+    document.querySelectorAll('.bg.effect, .video-hero-container').forEach(el => el.classList.add('hidden'));
+    qs('videoOptimizationView')?.classList.remove('hidden');
+    qs('export-btn-label').textContent = 'Descargar README VideoOtimization';
+    renderVideoOptimizationControls();
+    setupVideoOptimizationUi();
+  };
+
+  const previousExecuteSmartExport = window.executeSmartExport || executeSmartExport;
+  window.executeSmartExport = executeSmartExport = function executeSmartExportV6() {
+    if (state.activePane === 'videoOptimization') {
+      const readme = `# VideoOtimization\n\n` +
+        `Módulo integrado en LabHero para optimizar vídeos MP4 con FFmpeg desde Docker.\n\n` +
+        `## Perfil de salida\n\n` +
+        `- Contenedor: MP4\n- Códec: H.264 / libx264\n- Resolución máxima: 1920 px de ancho, altura proporcional par\n- FPS: 30\n- Bitrate objetivo: 3 Mbps\n- Maxrate: 4 Mbps\n- Audio: eliminado\n\n` +
+        `## Endpoint\n\nPOST /api/optimize\n\n` +
+        `Campo multipart esperado: file\n`;
+      triggerDownload(new Blob([readme], { type: 'text/markdown' }), 'README_VideoOtimization.md');
+      return;
+    }
+    previousExecuteSmartExport();
+  };
+
+  const style = document.createElement('style');
+  style.id = 'labhero-video-optimization-v6-style';
+  style.textContent = `
+    .video-optimization-viewport{position:absolute;inset:0;z-index:5;display:flex;align-items:center;justify-content:center;padding:40px;background:radial-gradient(circle at top, rgba(47,229,107,.16), transparent 38%), rgba(10,14,11,.96)}
+    .video-optimization-card{width:min(720px,92%);background:rgba(18,24,20,.94);border:1px solid var(--color-brand-primary);border-radius:22px;padding:34px;box-shadow:var(--brand-glow-effect);text-align:center;color:var(--color-text-main)}
+    .video-optimization-kicker{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--color-brand-primary);font-weight:800;margin-bottom:8px}
+    .video-optimization-card h2{font-family:var(--font-h1);font-size:clamp(2rem,5vw,3.2rem);margin:0 0 12px;color:#fff}
+    .video-optimization-card p{color:var(--color-text-muted);line-height:1.55;margin:0 auto 22px;max-width:620px}
+    .video-optimization-drop{display:flex;flex-direction:column;gap:7px;align-items:center;justify-content:center;border:2px dashed var(--color-brand-primary);border-radius:16px;padding:24px;background:rgba(47,229,107,.06);cursor:pointer;margin-bottom:14px}
+    .video-optimization-drop strong{color:#fff;font-size:16px}.video-optimization-drop span{color:#aab3ad;font-size:13px}
+    #video-optimization-input{display:none}.video-optimization-run{width:100%;padding:14px;border:0;border-radius:999px;background:var(--color-brand-primary);color:#07160c;font-weight:900;cursor:pointer}.video-optimization-run:disabled{background:#475569;color:#cbd5e1;cursor:not-allowed}
+    .video-optimization-status{margin-top:14px;padding:10px;border-radius:12px;background:rgba(255,255,255,.06);color:#cbd5e1;font-size:13px}.video-optimization-status[data-type="success"]{color:#2FE56B}.video-optimization-status[data-type="error"]{color:#ff6b6b}.video-optimization-status[data-type="working"]{color:#facc15}
+    .video-optimization-preview{margin-top:18px;width:100%;max-height:260px;border-radius:14px;background:#000}
+  `;
+  document.head.appendChild(style);
+  window.addEventListener('DOMContentLoaded', setupVideoOptimizationUi);
+})();
+</script>
+
+
+<script>
+/* ==========================================================================
+   LABHERO V8 - HEADER EDITABLE + MENÚ PRINCIPAL + CSS ASSETS FIX
+   ========================================================================== */
+(function(){
+  'use strict';
+
+  const PANE_META = [
+    { key: 'effects', fallback: 'Efectos Fondo' },
+    { key: 'images', fallback: 'Efectos Imagen' },
+    { key: 'styles', fallback: 'Estilos Marca' },
+    { key: 'header', fallback: 'Header' },
+    { key: 'videoOptimization', fallback: 'VideoOtimization' }
+  ];
+
+  function qs(id){ return document.getElementById(id); }
+
+  function ensureHeaderStateV8(){
+    state.designSystem = state.designSystem || {};
+    const defaults = {
+      enabled: true,
+      sticky: true,
+      height: 78,
+      logoSize: 54,
+      logoZoom: 1.0,
+      logoNoPadding: false,
+      bgOpacity: 0.86,
+      blur: 16,
+      borderOpacity: 0.22,
+      menuGap: 8,
+      menuRadius: 999,
+      menuStyle: 'glassPills',
+      menuHover: 'liftGlow',
+      logoEffect: 'glowPulse',
+      logoShape: 'none',
+      menuAlign: 'right',
+      menuLabels: {
+        effects: 'Efectos Fondo',
+        images: 'Efectos Imagen',
+        styles: 'Estilos Marca',
+        header: 'Header',
+        videoOptimization: 'VideoOtimization'
+      }
+    };
+    state.designSystem.header = Object.assign({}, defaults, state.designSystem.header || {});
+    state.designSystem.header.menuLabels = Object.assign({}, defaults.menuLabels, state.designSystem.header.menuLabels || {});
+    return state.designSystem.header;
+  }
+
+  function getHeaderLabel(key){
+    const h = ensureHeaderStateV8();
+    const meta = PANE_META.find(x => x.key === key);
+    return h.menuLabels[key] || (meta && meta.fallback) || key;
+  }
+
+  function setupAppHeaderV8(){
+    const topbar = document.querySelector('.topbar');
+    const effectNav = qs('effects-nav-bar-container');
+    if(!topbar || !effectNav) return;
+
+    topbar.classList.add('app-header-v8');
+    if(qs('app-header-inner-v8')) {
+      updateAppHeaderV8();
+      return;
+    }
+
+    const logo = qs('logo-viewport-render');
+    const inner = document.createElement('div');
+    inner.id = 'app-header-inner-v8';
+    inner.className = 'app-header-inner-v8';
+
+    const logoSlot = document.createElement('div');
+    logoSlot.id = 'app-header-logo-slot-v8';
+    logoSlot.className = 'app-header-logo-slot-v8';
+    if(logo) logoSlot.appendChild(logo);
+
+    const nav = document.createElement('nav');
+    nav.id = 'main-web-menu-v8';
+    nav.className = 'main-web-menu-v8';
+    PANE_META.forEach(meta => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.dataset.pane = meta.key;
+      btn.className = 'main-menu-item-v8';
+      btn.textContent = getHeaderLabel(meta.key);
+      btn.addEventListener('click', () => switchControlPane(meta.key));
+      nav.appendChild(btn);
+    });
+
+    const effectRow = document.createElement('div');
+    effectRow.id = 'app-header-effect-row-v8';
+    effectRow.className = 'app-header-effect-row-v8';
+    effectRow.appendChild(effectNav);
+
+    /* Botones de exportación en el header */
+    const exportZone = document.createElement('div');
+    exportZone.id = 'app-header-export-zone-v8';
+    exportZone.className = 'app-header-export-zone-v8';
+
+    /* Input de importación oculto */
+    const importFileInput = document.createElement('input');
+    importFileInput.type = 'file';
+    importFileInput.id = 'header-import-file-v8';
+    importFileInput.accept = '.json,.css';
+    importFileInput.style.display = 'none';
+    importFileInput.addEventListener('change', function(ev){
+      const file = ev.target.files && ev.target.files[0];
+      if(!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        if(file.name.toLowerCase().endsWith('.json')){
+          try {
+            const d = JSON.parse(reader.result);
+            if(d.effects) state.effects = Object.assign({}, state.effects, d.effects);
+            if(d.designSystem) state.designSystem = Object.assign({}, state.designSystem, d.designSystem);
+            if(typeof applyDesignTokens === 'function') applyDesignTokens();
+            if(typeof showEffect === 'function') showEffect(activeEffect);
+            if(typeof renderControls === 'function') renderControls();
+            if(typeof renderLogoOnViewport === 'function') renderLogoOnViewport();
+            updateAppHeaderV8();
+          } catch(err){ alert('JSON no válido: ' + err.message); }
+        } else {
+          if(typeof parseAndApplyCSSText === 'function') parseAndApplyCSSText(reader.result);
+          if(typeof applyDesignTokens === 'function') applyDesignTokens();
+          updateAppHeaderV8();
+        }
+      };
+      reader.readAsText(file);
+      ev.target.value = '';
+    });
+    document.body.appendChild(importFileInput);
+
+    const btnImport = document.createElement('button');
+    btnImport.type = 'button';
+    btnImport.className = 'header-export-btn-v8';
+    btnImport.title = 'Importar JSON o CSS unificado — se aplica a toda la visualización automáticamente';
+    btnImport.innerHTML = '📂 Importar';
+    btnImport.addEventListener('click', () => importFileInput.click());
+
+    const btnExpCSS = document.createElement('button');
+    btnExpCSS.type = 'button';
+    btnExpCSS.className = 'header-export-btn-v8';
+    btnExpCSS.title = 'Exportar CSS unificado (labHero_styles + header + efects + images)';
+    btnExpCSS.innerHTML = '⬇ CSS';
+    btnExpCSS.addEventListener('click', exportUnifiedCSSV8);
+
+    const btnExpJSON = document.createElement('button');
+    btnExpJSON.type = 'button';
+    btnExpJSON.className = 'header-export-btn-v8';
+    btnExpJSON.title = 'Exportar JSON unificado con todos los ajustes';
+    btnExpJSON.innerHTML = '⬇ JSON';
+    btnExpJSON.addEventListener('click', exportUnifiedJSONV8);
+
+    exportZone.appendChild(btnImport);
+    exportZone.appendChild(btnExpCSS);
+    exportZone.appendChild(btnExpJSON);
+
+    topbar.innerHTML = '';
+    inner.appendChild(logoSlot);
+    inner.appendChild(nav);
+    inner.appendChild(exportZone);
+    topbar.appendChild(inner);
+    topbar.appendChild(effectRow);
+
+    updateAppHeaderV8();
+  }
+
+  function updateAppHeaderV8(){
+    const h = ensureHeaderStateV8();
+    const root = document.documentElement;
+    root.style.setProperty('--app-header-height', h.height + 'px');
+    root.style.setProperty('--app-header-logo-size', h.logoSize + 'px');
+    root.style.setProperty('--app-header-logo-zoom', (h.logoZoom || 1.0));
+    root.style.setProperty('--app-header-bg-opacity', h.bgOpacity);
+    root.style.setProperty('--app-header-blur', h.blur + 'px');
+    root.style.setProperty('--app-header-border-opacity', h.borderOpacity);
+    root.style.setProperty('--app-header-menu-gap', h.menuGap + 'px');
+    root.style.setProperty('--app-header-menu-radius', h.menuRadius + 'px');
+    /* Fondo del header: sigue el color de viewport del design system */
+    const bgHex = (state && state.designSystem && state.designSystem.colors && state.designSystem.colors.bgViewport) || '#0A0E0B';
+    const rr = parseInt(bgHex.slice(1,3),16)||10, gg = parseInt(bgHex.slice(3,5),16)||14, bb = parseInt(bgHex.slice(5,7),16)||11;
+    root.style.setProperty('--app-header-bg-rgba', `rgba(${rr},${gg},${bb},${h.bgOpacity})`);
+
+    const topbar = document.querySelector('.topbar');
+    if(topbar) {
+      topbar.classList.toggle('header-sticky-v8', !!h.sticky);
+      topbar.dataset.menuStyle  = h.menuStyle;
+      topbar.dataset.menuHover  = h.menuHover;
+      topbar.dataset.logoEffect = h.logoEffect;
+      topbar.dataset.logoShape  = h.logoShape;
+      topbar.dataset.menuAlign  = h.menuAlign;
+      topbar.dataset.logoNoPadding = String(!!h.logoNoPadding);
+    }
+
+    const nav = qs('main-web-menu-v8');
+    if(nav) {
+      PANE_META.forEach(meta => {
+        const btn = nav.querySelector(`[data-pane="${meta.key}"]`);
+        if(btn) {
+          btn.textContent = getHeaderLabel(meta.key);
+          btn.classList.toggle('active', state.activePane === meta.key);
+        }
+      });
+    }
+
+    const row = qs('app-header-effect-row-v8');
+    if(row) row.classList.toggle('hidden', state.activePane !== 'effects');
+
+    renderLogoOnViewport && renderLogoOnViewport();
+  }
+
+  function appendInputFieldV8(parent, labelText, value, onInput){
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.value = value || '';
+    input.addEventListener('input', e => onInput(e.target.value));
+    createField(parent, labelText, input);
+    return input;
+  }
+
+  function appendInfoBoxV8(parent, html){
+    const box = document.createElement('div');
+    box.className = 'io-box';
+    box.innerHTML = html;
+    parent.appendChild(box);
+    return box;
+  }
+
+  function updateHeaderValueV8(key, value){
+    const h = ensureHeaderStateV8();
+    h[key] = value;
+    updateAppHeaderV8();
+  }
+
+  function updateHeaderLabelV8(key, value){
+    const h = ensureHeaderStateV8();
+    h.menuLabels[key] = value;
+    updateAppHeaderV8();
+  }
+
+  function renderHeaderControlsV8(){
+    const container = qs('dynamic-controls');
+    if(!container) return;
+    container.innerHTML = '';
+    const h = ensureHeaderStateV8();
+
+    createSectionTitle(container, 'Header principal de la web');
+    appendInfoBoxV8(container, '<strong>Header activo</strong><br>El logo vive ahora en el borde izquierdo del header. El menú principal de la web también está en el header y controla las secciones principales del laboratorio.');
+
+    createFileInputField(container, 'Imagen del logo del header (/media/logo-current.*)', 'image/*', processLogoUpload);
+    createSliderField(container, 'Altura del header', 56, 130, 2, h.height, 'px', val => updateHeaderValueV8('height', val));
+    createSliderField(container, 'Tamaño visual del logo', 34, 110, 2, h.logoSize, 'px', val => updateHeaderValueV8('logoSize', val));
+    createSliderField(container, 'Opacidad del fondo del header', 0, 1, 0.05, h.bgOpacity, '%', val => updateHeaderValueV8('bgOpacity', val), true);
+    createSliderField(container, 'Blur del fondo del header', 0, 32, 1, h.blur, 'px', val => updateHeaderValueV8('blur', val));
+    createSliderField(container, 'Opacidad de línea inferior', 0, 1, 0.05, h.borderOpacity, '%', val => updateHeaderValueV8('borderOpacity', val), true);
+    createCheckboxField(container, 'Header fijo al hacer scroll', !!h.sticky, val => updateHeaderValueV8('sticky', val));
+
+    createSectionTitle(container, 'Textos del menú principal');
+    PANE_META.forEach(meta => appendInputFieldV8(container, `Texto menú: ${meta.fallback}`, getHeaderLabel(meta.key), val => updateHeaderLabelV8(meta.key, val)));
+
+    createSectionTitle(container, 'Efectos visuales del menú');
+    createSelectField(container, 'Estilo de menú', [
+      { value: 'glassPills', label: 'Glass pills translúcido' },
+      { value: 'underline', label: 'Subrayado editorial' },
+      { value: 'neonRail', label: 'Neón con raíl inferior' },
+      { value: 'minimal', label: 'Minimalista limpio' }
+    ], h.menuStyle, val => updateHeaderValueV8('menuStyle', val));
+    createSelectField(container, 'Efecto hover del menú', [
+      { value: 'liftGlow', label: 'Elevación + glow' },
+      { value: 'slideBar', label: 'Barra deslizante inferior' },
+      { value: 'invert', label: 'Invertir color acento' },
+      { value: 'softScale', label: 'Escala suave' }
+    ], h.menuHover, val => updateHeaderValueV8('menuHover', val));
+    createSelectField(container, 'Alineación del menú', [
+      { value: 'right', label: 'Derecha' },
+      { value: 'center', label: 'Centro' },
+      { value: 'spread', label: 'Distribuido' }
+    ], h.menuAlign, val => updateHeaderValueV8('menuAlign', val));
+    createSliderField(container, 'Separación entre opciones', 0, 24, 1, h.menuGap, 'px', val => updateHeaderValueV8('menuGap', val));
+    createSliderField(container, 'Radio de botones de menú', 0, 999, 1, h.menuRadius, 'px', val => updateHeaderValueV8('menuRadius', val));
+
+    createSectionTitle(container, 'Efectos del logo');
+    createSelectField(container, 'Animación / efecto del logo', [
+      { value: 'none', label: 'Sin efecto' },
+      { value: 'glowPulse', label: 'Pulso glow de marca' },
+      { value: 'tiltHover', label: 'Inclinación al pasar el ratón' },
+      { value: 'orbitRing', label: 'Anillo orbital sutil' }
+    ], h.logoEffect, val => updateHeaderValueV8('logoEffect', val));
+    createSelectField(container, 'Contenedor del logo', [
+      { value: 'none', label: 'Sin contenedor' },
+      { value: 'softSquare', label: 'Cuadro suave glass' },
+      { value: 'circle', label: 'Circular glass' },
+      { value: 'badge', label: 'Insignia con borde' }
+    ], h.logoShape, val => updateHeaderValueV8('logoShape', val));
+
+    createSectionTitle(container, 'Zoom y espaciado del logo');
+    createSliderField(container, 'Zoom del logo (clip en bordes del header)', 0.5, 2.5, 0.05, h.logoZoom || 1.0, 'x', val => updateHeaderValueV8('logoZoom', val));
+    createCheckboxField(container, 'Sin márgenes / padding alrededor del logo', !!h.logoNoPadding, val => updateHeaderValueV8('logoNoPadding', val));
+  }
+
+  function populateCssSelectorV8(){
+    const select = qs('existing-css-selector-v5');
+    if(!select) return;
+    fetch('/api/list-css', { cache: 'no-store' })
+      .then(r => r.ok ? r.json() : Promise.reject(new Error('api css unavailable')))
+      .then(data => {
+        const files = data.files || [];
+        select.innerHTML = '';
+        if(!files.length){
+          const opt = document.createElement('option');
+          opt.value = '';
+          opt.textContent = 'No hay CSS en /html, /html/assets o /html/assets/css';
+          select.appendChild(opt);
+          select.disabled = true;
+          return;
+        }
+        select.disabled = false;
+        files.forEach(file => {
+          const opt = document.createElement('option');
+          opt.value = file.url || ('/media/' + file.name);
+          opt.textContent = `${file.name} · ${file.url || '/media/' + file.name}`;
+          select.appendChild(opt);
+        });
+      })
+      .catch(() => {
+        // Mantiene el selector que haya generado el código anterior si el backend no está levantado.
+      });
+  }
+
+  const previousSwitchControlPaneV8 = window.switchControlPane || switchControlPane;
+  window.switchControlPane = switchControlPane = function switchControlPaneV8(pane){
+    setupAppHeaderV8();
+    if(pane !== 'header') {
+      previousSwitchControlPaneV8(pane);
+      updateAppHeaderV8();
+      if(pane === 'styles') setTimeout(populateCssSelectorV8, 50);
+      return;
+    }
+
+    state.activePane = 'header';
+    document.querySelectorAll('.panel-switcher button').forEach(btn => btn.classList.remove('active'));
+    qs('panel-title-text').innerText = 'Header';
+    qs('panel-desc-text').innerText = 'Diseño del encabezado principal: logo, menú, efectos visuales, comportamiento sticky y textos de navegación.';
+    qs('import-zone-effects')?.classList.add('hidden');
+    qs('import-zone-styles')?.classList.add('hidden');
+    qs('imageEffectsView')?.classList.add('hidden');
+    qs('videoOptimizationView')?.classList.add('hidden');
+    qs('hero-main-card-wrapper')?.classList.remove('hidden');
+    document.querySelectorAll('.bg.effect, .video-hero-container').forEach(el => el.classList.add('hidden'));
+    qs('export-btn-label').textContent = 'Exportar Header CSS (.css)';
+    renderHeaderControlsV8();
+    updateAppHeaderV8();
+  };
+
+  const previousRenderControlsV8 = window.renderControls || renderControls;
+  window.renderControls = renderControls = function renderControlsV8(){
+    if(state.activePane === 'header') {
+      renderHeaderControlsV8();
+      return;
+    }
+    previousRenderControlsV8();
+    updateAppHeaderV8();
+    if(state.activePane === 'styles') {
+      const container = qs('dynamic-controls');
+      if(container && !qs('css-path-info-v8')) {
+        const info = appendInfoBoxV8(container, '<strong>Rutas CSS detectadas</strong><br>El selector busca CSS principalmente en <code>/html/assets/css/*.css</code>. También mantiene compatibilidad con <code>/html/assets/*.css</code>, <code>/html/*.css</code> y <code>/html/media/*.css</code>. La carpeta recomendada y usada por defecto es <code>/assets/css</code>.');
+        info.id = 'css-path-info-v8';
+      }
+      setTimeout(populateCssSelectorV8, 50);
+    }
+  };
+
+  function headerCssTextV8(){
+    const h = ensureHeaderStateV8();
+    const labels = JSON.stringify(h.menuLabels, null, 2).replace(/\*\//g, '* /');
+    return `/* LABHERO HEADER V8 */\n:root {\n` +
+      `  --app-header-height: ${h.height}px;\n` +
+      `  --app-header-logo-size: ${h.logoSize}px;\n` +
+      `  --app-header-logo-zoom: ${h.logoZoom || 1.0};\n` +
+      `  --app-header-bg-opacity: ${h.bgOpacity};\n` +
+      `  --app-header-blur: ${h.blur}px;\n` +
+      `  --app-header-border-opacity: ${h.borderOpacity};\n` +
+      `  --app-header-menu-gap: ${h.menuGap}px;\n` +
+      `  --app-header-menu-radius: ${h.menuRadius}px;\n` +
+      `}\n\n` +
+      `/* Estado funcional exportado */\n` +
+      `/* sticky: ${h.sticky} */\n` +
+      `/* menuStyle: ${h.menuStyle} */\n` +
+      `/* menuHover: ${h.menuHover} */\n` +
+      `/* logoEffect: ${h.logoEffect} */\n` +
+      `/* logoShape: ${h.logoShape} */\n` +
+      `/* menuAlign: ${h.menuAlign} */\n` +
+      `/* menuLabels: ${labels} */\n`;
+  }
+
+  const previousExecuteSmartExportV8 = window.executeSmartExport || executeSmartExport;
+  window.executeSmartExport = executeSmartExport = function executeSmartExportV8(){
+    if(state.activePane === 'header') {
+      triggerDownload(new Blob([headerCssTextV8()], { type: 'text/css' }), 'labHero_header.css');
+      return;
+    }
+    previousExecuteSmartExportV8();
+  };
+
+  const style = document.createElement('style');
+  style.id = 'labhero-header-v8-style';
+  style.textContent = `
+    :root{--app-header-height:78px;--app-header-logo-size:54px;--app-header-bg-opacity:.86;--app-header-blur:16px;--app-header-border-opacity:.22;--app-header-menu-gap:8px;--app-header-menu-radius:999px;}
+    .topbar.app-header-v8{position:sticky;top:0;z-index:500;background:var(--app-header-bg-rgba,rgba(10,14,11,0.86)) !important;backdrop-filter:blur(var(--app-header-blur));border-bottom:1px solid rgba(47,229,107,var(--app-header-border-opacity)) !important;box-shadow:0 18px 44px rgba(0,0,0,.22);}
+    .topbar.app-header-v8:not(.header-sticky-v8){position:relative;}
+    .app-header-inner-v8{min-height:var(--app-header-height);display:grid;grid-template-columns:auto 1fr;align-items:center;gap:22px;padding:0 clamp(16px,3vw,34px);}
+    .app-header-logo-slot-v8{display:flex;align-items:center;justify-content:flex-start;min-width:var(--app-header-logo-size);flex-shrink:0;height:var(--app-header-logo-size);overflow:hidden;}
+    .app-header-v8 .brand-logo-container{position:relative !important;top:auto !important;left:auto !important;right:auto !important;width:var(--app-header-logo-size) !important;height:var(--app-header-logo-size) !important;z-index:1 !important;display:flex !important;overflow:hidden !important;}
+    .app-header-v8 .brand-logo-container img,.app-header-v8 .brand-logo-container svg{width:100% !important;height:100% !important;object-fit:contain !important;transform:scale(var(--app-header-logo-zoom,1));transition:transform 0.3s ease;}
+    .app-header-v8[data-logo-no-padding="true"] .brand-logo-container{padding:0 !important;border-radius:4px !important;}
+    .app-header-v8[data-logo-shape="softSquare"] .brand-logo-container{padding:7px;border-radius:18px;background:rgba(255,255,255,.06);border:1px solid rgba(47,229,107,.2);}
+    .app-header-v8[data-logo-shape="circle"] .brand-logo-container{padding:7px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid rgba(47,229,107,.25);}
+    .app-header-v8[data-logo-shape="badge"] .brand-logo-container{padding:7px;border-radius:16px;background:linear-gradient(135deg,rgba(47,229,107,.18),rgba(255,255,255,.04));border:1px solid var(--color-brand-primary);box-shadow:var(--brand-glow-effect);}
+    .app-header-v8[data-logo-effect="glowPulse"] .brand-logo-container{animation:logoPulseV8 2.8s ease-in-out infinite;}
+    .app-header-v8[data-logo-effect="tiltHover"] .brand-logo-container{transition:transform .25s ease,filter .25s ease;}.app-header-v8[data-logo-effect="tiltHover"] .brand-logo-container:hover{transform:rotate(-5deg) scale(1.05);filter:drop-shadow(var(--brand-glow-effect));}
+    .app-header-v8[data-logo-effect="orbitRing"] .brand-logo-container::after{content:"";position:absolute;inset:-6px;border-radius:inherit;border:1px dashed rgba(47,229,107,.55);animation:logoOrbitV8 8s linear infinite;}
+    @keyframes logoPulseV8{0%,100%{filter:drop-shadow(0 0 5px rgba(47,229,107,.3));transform:scale(1)}50%{filter:drop-shadow(0 0 18px rgba(47,229,107,.62));transform:scale(1.025)}}
+    @keyframes logoOrbitV8{to{transform:rotate(360deg)}}
+    .main-web-menu-v8{display:flex;align-items:center;gap:var(--app-header-menu-gap);flex-wrap:wrap;justify-content:flex-end;}
+    .app-header-v8[data-menu-align="center"] .main-web-menu-v8{justify-content:center;}.app-header-v8[data-menu-align="spread"] .main-web-menu-v8{justify-content:space-between;}
+    .main-menu-item-v8{position:relative;border:0;border-radius:var(--app-header-menu-radius);padding:10px 14px;color:#f8fafc;background:transparent;cursor:pointer;font-weight:850;font-size:13px;letter-spacing:.01em;transition:transform .22s ease,box-shadow .22s ease,background .22s ease,color .22s ease;white-space:nowrap;}
+    .app-header-v8[data-menu-style="glassPills"] .main-menu-item-v8{background:rgba(255,255,255,.065);border:1px solid rgba(255,255,255,.12);}
+    .app-header-v8[data-menu-style="glassPills"] .main-menu-item-v8.active{background:var(--color-brand-primary);color:#07160c;border-color:var(--color-brand-primary);box-shadow:var(--brand-glow-effect);}
+    .app-header-v8[data-menu-style="underline"] .main-menu-item-v8{border-radius:0;background:transparent;padding-inline:7px;}.app-header-v8[data-menu-style="underline"] .main-menu-item-v8::after{content:"";position:absolute;left:8px;right:8px;bottom:2px;height:2px;background:var(--color-brand-primary);transform:scaleX(0);transition:transform .22s ease;}.app-header-v8[data-menu-style="underline"] .main-menu-item-v8.active::after,.app-header-v8[data-menu-style="underline"] .main-menu-item-v8:hover::after{transform:scaleX(1);}
+    .app-header-v8[data-menu-style="neonRail"] .main-menu-item-v8{background:linear-gradient(180deg,rgba(47,229,107,.1),rgba(47,229,107,.02));border:1px solid rgba(47,229,107,.18);}.app-header-v8[data-menu-style="neonRail"] .main-menu-item-v8.active{box-shadow:inset 0 -3px 0 var(--color-brand-primary),0 0 18px rgba(47,229,107,.2);color:#fff;}
+    .app-header-v8[data-menu-style="minimal"] .main-menu-item-v8{background:transparent;color:#cbd5e1;}.app-header-v8[data-menu-style="minimal"] .main-menu-item-v8.active{color:var(--color-brand-primary);}
+    .app-header-v8[data-menu-hover="liftGlow"] .main-menu-item-v8:hover{transform:translateY(-2px);box-shadow:var(--brand-glow-effect);}
+    .app-header-v8[data-menu-hover="softScale"] .main-menu-item-v8:hover{transform:scale(1.04);}.app-header-v8[data-menu-hover="invert"] .main-menu-item-v8:hover{background:var(--color-brand-primary);color:#07160c;}.app-header-v8[data-menu-hover="slideBar"] .main-menu-item-v8:hover::before{content:"";position:absolute;left:12px;right:12px;bottom:5px;height:2px;background:var(--color-brand-primary);}
+    .app-header-effect-row-v8{display:flex;justify-content:center;padding:0 14px 10px;}.app-header-effect-row-v8.hidden{display:none !important;}
+    .app-header-effect-row-v8 #effects-nav-bar-container{display:flex !important;gap:5px;flex-wrap:wrap;justify-content:center;padding:0;background:transparent;}
+    .app-header-effect-row-v8 #effects-nav-bar-container button{background:rgba(255,255,255,.08);color:#e2e8f0;border:1px solid rgba(255,255,255,.12);}.app-header-effect-row-v8 #effects-nav-bar-container button.active,.app-header-effect-row-v8 #effects-nav-bar-container button:hover{background:rgba(47,229,107,.16);color:var(--color-brand-primary);border-color:var(--color-brand-primary);}
+    .app-header-export-zone-v8{display:flex;align-items:center;gap:6px;margin-left:auto;flex-shrink:0;}
+    .header-export-btn-v8{border:1px solid rgba(47,229,107,.4);background:rgba(47,229,107,.08);color:var(--color-brand-primary,#2FE56B);border-radius:999px;padding:7px 13px;font-size:12px;font-weight:800;cursor:pointer;letter-spacing:.02em;transition:all .2s ease;white-space:nowrap;}
+    .header-export-btn-v8:hover{background:var(--color-brand-primary,#2FE56B);color:#07160c;box-shadow:0 0 14px rgba(47,229,107,.35);}
+    .panel-switcher{display:none !important;}
+    @media(max-width:760px){.app-header-inner-v8{grid-template-columns:1fr;gap:10px;padding-block:12px}.app-header-logo-slot-v8{justify-content:center}.main-web-menu-v8{justify-content:center}.main-menu-item-v8{font-size:12px;padding:8px 10px}.lab{grid-template-columns:1fr}.panel{max-height:none}.hero{border-right:0}}
+  `;
+  document.head.appendChild(style);
+
+  /* Guarda en /assets/css/ vía API del backend y recarga el <link> */
+  function saveAssetToServer(filename, content){
+    return fetch('/api/save-asset', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ filename, content })
+    })
+    .then(r => r.json())
+    .then(data => {
+      if(data.ok){
+        console.log(`✓ Guardado en servidor: ${data.path} (${data.bytes} bytes)`);
+        /* Recarga el link CSS si es .css */
+        if(filename.endsWith('.css')){
+          const link = document.getElementById('labhero-default-unified');
+          if(link) link.href = `/assets/css/${filename}?v=${data.updated_at || Date.now()}`;
+        }
+      } else {
+        console.warn('Backend save-asset error:', data.error);
+      }
+      return data;
+    })
+    .catch(err => console.warn('No se pudo guardar en servidor (¿uploader no disponible?):', err));
+  }
+
+  function exportUnifiedCSSV8(){
+    const ds = state.designSystem || {};
+    const col = (ds.colors || {});
+    const typ = (ds.typography || {});
+    const textStyle = ds.textStyle || {};
+    const h = ensureHeaderStateV8();
+    const eff = state.effects || {};
+    const im = eff.imageEffects || {};
+    const vid = eff.video || {};
+    const par = eff.particles || {};
+
+    const css = `/* ============================================================
+   LABHERO UNIFIED CSS EXPORT
+   Generado: ${new Date().toISOString()}
+   Incluye: labHero_styles + labHero_header + labHero_efects + labHero_images
+   ============================================================ */
+
+/* ── labHero_styles.css ── */
+:root {
+  --font-h1: ${typ.fontH1 || "'Space Grotesk', sans-serif"};
+  --font-body: ${typ.fontBody || "'Inter', sans-serif"};
+  --color-brand-primary: ${col.brandPrimary || '#2FE56B'};
+  --color-bg-viewport: ${col.bgViewport || '#0A0E0B'};
+  --color-bg-card: ${col.cardColorHex || '#121814'};
+  --color-border: ${col.colorBorder || '#1E2622'};
+  --card-radius: ${ds.radius || 14}px;
+  --hero-text-style-preset: "${(textStyle.preset || 'cinematicGlow')}";
+  --hero-text-shadow-strength: ${textStyle.shadowStrength ?? 1};
+  --hero-text-stroke-width: ${textStyle.strokeWidth ?? 0.7}px;
+  --hero-text-bg-opacity: ${textStyle.backdropOpacity ?? 0};
+  --hero-text-align: ${textStyle.align || 'center'};
+}
+
+/* ── labHero_header.css ── */
+:root {
+  --app-header-height: ${h.height}px;
+  --app-header-logo-size: ${h.logoSize}px;
+  --app-header-logo-zoom: ${h.logoZoom || 1.0};
+  --app-header-bg-opacity: ${h.bgOpacity};
+  --app-header-blur: ${h.blur}px;
+  --app-header-border-opacity: ${h.borderOpacity};
+  --app-header-menu-gap: ${h.menuGap}px;
+  --app-header-menu-radius: ${h.menuRadius}px;
+}
+
+/* ── labHero_efects.css ── */
+:root {
+  --labhero-effects-config-source: "labHero_efects.json";
+  --labhero-video-base-folder: "${vid.baseFolder || '/media/'}";
+  --labhero-video-speed: ${vid.speed || 1};
+  --labhero-video-brightness: ${vid.brightness || 100}%;
+  --labhero-video-contrast: ${vid.contrast || 105}%;
+  --labhero-video-mask-opacity: ${vid.maskOpacity || 0.35};
+  --labhero-particles-count: ${par.count || 80};
+  --labhero-particles-scale: ${par.scale || 1};
+  --color-brand-primary: ${col.brandPrimary || '#2FE56B'};
+  --color-bg-viewport: ${col.bgViewport || '#0A0E0B'};
+}
+
+/* ── labHero_images.css ── */
+:root {
+  --labhero-image-anim-speed: ${im.speed || 1};
+  --labhero-image-filter-intensity: ${im.scale || 1.5};
+  --labhero-image-active-effect-mode: "${im.activeFilter || 'blur'}";
+  --labhero-image-logo-url: ${im.logoUrl ? `url("${im.logoUrl.split('?')[0]}")` : 'none'};
+  --labhero-carousel-enabled: ${im.carouselEnabled ? 1 : 0};
+  --labhero-carousel-delay: ${im.carouselDelay || 5}s;
+  --labhero-carousel-transition: "${im.carouselTransition || 'fade'}";
+}
+`;
+    /* Descarga al navegador y sobrescribe en /assets/css/ */
+    triggerDownload(new Blob([css], { type: 'text/css' }), 'labHero_unified.css');
+    saveAssetToServer('labHero_unified.css', css);
+  }
+
+  function exportUnifiedJSONV8(){
+    const data = {
+      exported: new Date().toISOString(),
+      effects: state.effects,
+      designSystem: state.designSystem
+    };
+    const jsonStr = JSON.stringify(data, null, 2);
+    /* Descarga al navegador y sobrescribe en /assets/css/ */
+    triggerDownload(new Blob([jsonStr], { type: 'application/json' }), 'labHero_unified.json');
+    saveAssetToServer('labHero_unified.json', jsonStr);
+  }
+
+  window.updateAppHeaderV8 = updateAppHeaderV8;
+  window.ensureHeaderStateV8 = ensureHeaderStateV8;
+
+  window.addEventListener('DOMContentLoaded', () => {
+    ensureHeaderStateV8();
+    setupAppHeaderV8();
+    updateAppHeaderV8();
+    if(state.activePane === 'styles') setTimeout(populateCssSelectorV8, 100);
+  });
+})();
+</script>
+
+
+<script id="labhero-default-css-v9">
+(function(){
+  function ensureCss(id, href){
+    if(document.getElementById(id)) return;
+    const link = document.createElement('link');
+    link.id = id; link.rel = 'stylesheet'; link.href = href;
+    document.head.appendChild(link);
+  }
+
+  function loadFallbackPack(){
+    /* Fallback: los 4 ficheros individuales si no existe el unificado */
+    ensureCss('labhero-default-styles',  '/assets/css/labHero_styles.css');
+    ensureCss('labhero-default-effects', '/assets/css/labHero_efects.css');
+    ensureCss('labhero-default-images',  '/assets/css/labHero_images.css');
+    ensureCss('labhero-default-header',  '/assets/css/labHero_header.css');
+  }
+
+  window.loadLabHeroDefaultCssV9 = function(){
+    const unifiedId  = 'labhero-default-unified';
+    const unifiedHref = '/assets/css/labHero_unified.css';
+
+    /* Si el <link> ya existe (puesto en <head>) verifica que responda OK */
+    const existing = document.getElementById(unifiedId);
+    if(existing) {
+      fetch(unifiedHref, { method: 'HEAD', cache: 'no-store' })
+        .then(r => { if(!r.ok) { existing.remove(); loadFallbackPack(); } })
+        .catch(() => { existing.remove(); loadFallbackPack(); });
+      return;
+    }
+    /* Si no existe, prueba a cargar unificado */
+    fetch(unifiedHref, { method: 'HEAD', cache: 'no-store' })
+      .then(r => r.ok ? ensureCss(unifiedId, unifiedHref) : loadFallbackPack())
+      .catch(() => loadFallbackPack());
+  };
+
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', window.loadLabHeroDefaultCssV9);
+  else window.loadLabHeroDefaultCssV9();
+})();
+</script>
+
+<script id="labhero-magnifier-v9">
+/* ==========================================================================
+   MAGNIFIER GLASS V9 — Canvas real con zoom sobre contenido animado
+   ========================================================================== */
+(function(){
+  const holder   = document.getElementById('magnifierGlass');
+  const lensEl   = document.getElementById('lupa-lens-element');
+  if(!holder || !lensEl) return;
+
+  /* Canvas de fondo — fondo visible del efecto */
+  const bgCanvas = document.createElement('canvas');
+  bgCanvas.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;';
+  holder.appendChild(bgCanvas);
+  const bgCtx = bgCanvas.getContext('2d');
+
+  /* Canvas dentro de la lente — muestra la misma escena con zoom */
+  const fgCanvas = document.createElement('canvas');
+  fgCanvas.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;';
+  lensEl.style.background = 'transparent';
+  lensEl.style.overflow   = 'hidden';
+  lensEl.innerHTML = '';
+  lensEl.appendChild(fgCanvas);
+  const fgCtx = fgCanvas.getContext('2d');
+
+  let mgW = 0, mgH = 0, mgDots = [], mgT = 0;
+
+  function mgResize(){
+    mgW = bgCanvas.width  = holder.clientWidth  || 800;
+    mgH = bgCanvas.height = holder.clientHeight || 500;
+    mgCreateDots();
+  }
+
+  function mgCreateDots(){
+    mgDots = Array.from({length:150}, () => ({
+      x:  Math.random() * mgW,
+      y:  Math.random() * mgH,
+      r:  Math.random() * 2.2 + 1.2,
+      vx: (Math.random() - 0.5) * 0.45,
+      vy: (Math.random() - 0.5) * 0.45
+    }));
+  }
+
+  function mgDrawScene(ctx, cw, ch, cx, cy, zoom){
+    ctx.clearRect(0, 0, cw, ch);
+    mgT += 0;
+    const col = (state && state.effects && state.effects.particles.color) || '#2FE56B';
+
+    /* Líneas de conexión */
+    const threshold = 90;
+    ctx.lineWidth = 0.9;
+    for(let i = 0; i < mgDots.length; i++){
+      for(let j = i+1; j < mgDots.length; j++){
+        const a = mgDots[i], b = mgDots[j];
+        const d = Math.hypot(a.x - b.x, a.y - b.y);
+        if(d < threshold){
+          const ax = (a.x - cx) * zoom + cw/2;
+          const ay = (a.y - cy) * zoom + ch/2;
+          const bx = (b.x - cx) * zoom + cw/2;
+          const by = (b.y - cy) * zoom + ch/2;
+          ctx.globalAlpha = (1 - d/threshold) * 0.45;
+          ctx.strokeStyle = col;
+          ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(bx, by); ctx.stroke();
+        }
+      }
+    }
+
+    /* Nodos */
+    ctx.globalAlpha = 1;
+    for(const p of mgDots){
+      const sx = (p.x - cx) * zoom + cw/2;
+      const sy = (p.y - cy) * zoom + ch/2;
+      const pulse = 0.8 + Math.sin(mgT * 1.8 + p.x * 0.03) * 0.2;
+      ctx.fillStyle = col;
+      ctx.globalAlpha = pulse;
+      ctx.beginPath();
+      ctx.arc(sx, sy, p.r * Math.max(1, zoom * 0.6), 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  function mgAnimate(){
+    mgT += 0.016;
+    /* Mover partículas */
+    for(const d of mgDots){
+      d.x += d.vx; d.y += d.vy;
+      if(d.x < 0 || d.x > mgW) d.vx *= -1;
+      if(d.y < 0 || d.y > mgH) d.vy *= -1;
+    }
+
+    if(typeof state !== 'undefined' && state.activePane === 'effects' && typeof activeEffect !== 'undefined' && activeEffect === 'magnifierGlass'){
+      /* Fondo */
+      mgDrawScene(bgCtx, mgW, mgH, mgW/2, mgH/2, 1);
+
+      /* Lente — zoom centrado en el ratón */
+      const cfg   = state.effects.magnifierGlass;
+      const zoom  = cfg.zoom  || 1.5;
+      const lsize = cfg.scale || 150;
+      const mx    = (typeof globalMouse !== 'undefined' && globalMouse.x != null) ? globalMouse.x : mgW/2;
+      const my    = (typeof globalMouse !== 'undefined' && globalMouse.y != null) ? globalMouse.y : mgH/2;
+      if(fgCanvas.width !== lsize || fgCanvas.height !== lsize){
+        fgCanvas.width  = lsize;
+        fgCanvas.height = lsize;
+      }
+      mgDrawScene(fgCtx, lsize, lsize, mx, my, zoom);
+    }
+    requestAnimationFrame(mgAnimate);
+  }
+
+  window.addEventListener('resize', mgResize);
+  mgResize();
+  mgAnimate();
+})();
+</script>
+
+</body>
+</html>
