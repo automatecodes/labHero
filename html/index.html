@@ -2986,12 +2986,16 @@ window.addEventListener('DOMContentLoaded', () => {
   style.id = 'labhero-header-v8-style';
   style.textContent = `
     :root{--app-header-height:78px;--app-header-logo-size:54px;--app-header-bg-opacity:.86;--app-header-blur:16px;--app-header-border-opacity:.22;--app-header-menu-gap:8px;--app-header-menu-radius:999px;}
-    .topbar.app-header-v8{position:sticky;top:0;z-index:500;background:var(--app-header-bg-rgba,rgba(10,14,11,0.86)) !important;backdrop-filter:blur(var(--app-header-blur));border-bottom:1px solid rgba(47,229,107,var(--app-header-border-opacity)) !important;box-shadow:0 18px 44px rgba(0,0,0,.22);}
+    /* El topbar recorta todo lo que se salga de los bordes del header */
+    .topbar.app-header-v8{position:sticky;top:0;z-index:500;overflow:hidden;background:var(--app-header-bg-rgba,rgba(10,14,11,0.86)) !important;backdrop-filter:blur(var(--app-header-blur));border-bottom:1px solid rgba(47,229,107,var(--app-header-border-opacity)) !important;box-shadow:0 18px 44px rgba(0,0,0,.22);}
     .topbar.app-header-v8:not(.header-sticky-v8){position:relative;}
     .app-header-inner-v8{min-height:var(--app-header-height);display:grid;grid-template-columns:auto 1fr;align-items:center;gap:22px;padding:0 clamp(16px,3vw,34px);}
-    .app-header-logo-slot-v8{display:flex;align-items:center;justify-content:flex-start;min-width:var(--app-header-logo-size);flex-shrink:0;height:var(--app-header-logo-size);overflow:hidden;}
-    .app-header-v8 .brand-logo-container{position:relative !important;top:auto !important;left:auto !important;right:auto !important;width:var(--app-header-logo-size) !important;height:var(--app-header-logo-size) !important;z-index:1 !important;display:flex !important;overflow:hidden !important;}
-    .app-header-v8 .brand-logo-container img,.app-header-v8 .brand-logo-container svg{width:100% !important;height:100% !important;object-fit:contain !important;transform:scale(var(--app-header-logo-zoom,1));transition:transform 0.3s ease;}
+    /* El slot no restringe tamaño — el logo se ve completo y el zoom crece fuera del slot */
+    .app-header-logo-slot-v8{display:flex;align-items:center;justify-content:flex-start;flex-shrink:0;}
+    /* El contenedor ocupa el tamaño del logo (cuadrado) pero deja pasar el zoom sin cortar */
+    .app-header-v8 .brand-logo-container{position:relative !important;top:auto !important;left:auto !important;right:auto !important;width:var(--app-header-logo-size) !important;height:var(--app-header-logo-size) !important;z-index:1 !important;display:flex !important;overflow:visible !important;}
+    /* El zoom escala desde el borde izquierdo: crece hacia la derecha, arriba y abajo */
+    .app-header-v8 .brand-logo-container img,.app-header-v8 .brand-logo-container svg{width:100% !important;height:100% !important;object-fit:contain !important;transform:scale(var(--app-header-logo-zoom,1));transform-origin:left center;transition:transform 0.3s ease;}
     .app-header-v8[data-logo-no-padding="true"] .brand-logo-container{padding:0 !important;border-radius:4px !important;}
     .app-header-v8[data-logo-shape="softSquare"] .brand-logo-container{padding:7px;border-radius:18px;background:rgba(255,255,255,.06);border:1px solid rgba(47,229,107,.2);}
     .app-header-v8[data-logo-shape="circle"] .brand-logo-container{padding:7px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid rgba(47,229,107,.25);}
